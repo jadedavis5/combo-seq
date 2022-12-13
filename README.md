@@ -37,6 +37,12 @@ $ params.gtf_file = "/path/to/genome.gtf"
 $ params.outdir = "/path/to/outdirectory"
 $ params.reads = '/path/to/raw/reads/fa'
 $ params.miRDP2 = "/path/to/miRDP2" # [Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
+
+#run using:
+nextflow run workflow.nf
+
+#if the run is interrupted, resume from last point using:
+nextflow run workflow.nf -resume
 ```
 [Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
 Include any essential instructions for:
@@ -45,21 +51,6 @@ Include any essential instructions for:
 - Configuring It
 - Running it
 
-### More Specific Topics (+ sample sub-categories)
-- Versioning: Services, APIs, Systems
-- Common Error Messages/related details
-- Tests
-
-### Contributing
-- Contributor Guidelines
-- Code Style/Requirements
-- Format for commit messages
-- Thank you (name contributors)
-
-### TODO
-- Next steps
-- Features planned
-- Known bugs (shortlist)
 
 ### Contact
 - Email address
