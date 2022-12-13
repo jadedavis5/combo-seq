@@ -23,7 +23,7 @@ its reproducible... saves your progress
 - Keep it useful.
 
 ### Getting Started/Requirements/Prerequisites/Dependencies
-# Prerequisites
+# Dependencies 
 
 
 ``` 
@@ -36,8 +36,9 @@ $ params.genome_file = "/path/to/genome.fa"
 $ params.gtf_file = "/path/to/genome.gtf"
 $ params.outdir = "/path/to/outdirectory"
 $ params.reads = '/path/to/raw/reads/fa'
-$ params.miRDP2 = "/path/to/miRDP2" #[Download here]()
+$ params.miRDP2 = "/path/to/miRDP2" # [Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
 ```
+[Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
 Include any essential instructions for:
 - Getting it
 - Installing It
