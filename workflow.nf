@@ -9,6 +9,7 @@ params.multiqc = "/data/multiqc"
 params.outdir = "/data2/outdir"
 params.reads = '/data/Comboseq-Novaseq/fastqs/*R{1,2}_001.fastq.gz'
 params.bam = '/data2/outdir/aligned/*{1,2}Aligned.sortedByCoord.out.bam'
+params.miRDP2 = "/home/ubuntu/1.1.4/miRDP2-v1.1.4_pipeline.bash"
 log.info """
 RNASEQ-NF PIPELINE
 ==================
@@ -17,25 +18,36 @@ gtf: ${params.gtf_file}
 outdir: ${params.outdir}
 reads:${params.reads}
 bam:${params.bam}
+miRDP2:${params.miRDP2}
 """
 .stripIndent()
 
+/*
+ * define the `index` process that creates a binary index
+ * given the transcriptome file
+ */
 
 workflow {
         read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
         trimmed_pairs_ch = TRIM(read_pairs_ch)
         index = INDEX(params.genome_file, params.gtf_file)
+
         fastqc_ch = FASTQC(read_pairs_ch)
         MULTIQC(fastqc_ch.collect())
         align_ch = ALIGN(index, trimmed_pairs_ch)
         INDEXALIGNMENT(align_ch)
         trimfastqc_ch = trimFASTQC(trimmed_pairs_ch)
         trimMULTIQC(trimfastqc_ch.collect())
+
         filter_ch = FILTER(align_ch, trimmed_pairs_ch)
-        filter_ch.view()
-        featureCounts(params.gtf_file, trimmed_pairs_ch, filter_ch)
+
+        GeneCount(align_ch)
+        prematrix_ch= prematrix(align_ch)
+        matrix(align_ch, prematrix_ch.collect())
+        miRDP2(trimmed_pairs_ch, params.miRDP2, params.genome_file)
 
 }
+
 process INDEX {
 cpus 16
     input:
@@ -53,7 +65,7 @@ cpus 16
         --sjdbOverhang 149 \
         --quantMode GeneCounts \
         --genomeSAindexNbases 13
-   """
+"""
 }
 process FASTQC {
 cpus 16
@@ -88,7 +100,7 @@ cpus 16
 }
 process TRIM {
 cpus 16
-        tag "trimming samples"
+        tag "trimming $sample_id"
         publishDir "$params.outdir/trimmed"
         input:
         tuple val(sample_id), path (reads)
@@ -137,15 +149,14 @@ cpus 16
 process ALIGN {
 cpus 16
     publishDir "$params.outdir/alignment", mode: 'copy', pattern:'*Aligned.sortedByCoord.out.bam'
-
+    publishDir "$params.outdir/genecounts", mode: 'copy', pattern:'*ReadsPerGene.out.tab'
 
     input:
     path index
     tuple val(sample_id), path(trimmed_pairs_ch)
 
     output:
-    path '*Aligned.sortedByCoord.out.bam'
-
+    tuple val(sample_id), path('*')
     script:
     """
         STAR --runThreadN $task.cpus --genomeDir $index \
@@ -167,22 +178,23 @@ process INDEXALIGNMENT {
 cpus 16
         publishDir "$params.outdir/indexed.aligment", mode: 'copy'
         input:
-        path align_ch
+        tuple val(sample_id), path(align_ch)
 
         output:
         path "*.bai"
 
         script:
         """
-        samtools index ${align_ch}
+        samtools index ${align_ch[0]}
         """
 }
+
 process FILTER {
 cpus 16
         publishDir "$params.outdir/separated/srna", mode: 'copy', pattern: "*srna.bam"
         publishDir "$params.outdir/separated/mrna", mode: 'copy', pattern: "*mrna.bam"
         input:
-        path align_ch
+        tuple val(sample_id), path(align_ch)
         tuple val(sample_id), path(trimmed_pairs_ch)
 
         output:
@@ -190,32 +202,90 @@ cpus 16
 
         script:
         """
-        samtools view -hf 2 ${align_ch} | \
+        samtools view -hf 2 ${align_ch[0]} | \
         awk 'substr(\$0,1,1)=="@" ||  (\$9<=50)' | \
         samtools view -b > ${sample_id}_srna.bam
 
-        samtools view -hf 2 ${align_ch} | \
+        samtools view -hf 2 ${align_ch[0]} | \
         awk 'substr(\$0,1,1)=="@" ||  (\$9>50)' | \
         samtools view -b > ${sample_id}_mrna.bam
         """
 }
 
-process featureCounts {
+process miRDP2 {
 cpus 16
-        tag "Finding gene overlap"
-        publishDir "$params.outdir/featurecounts"
+        publishDir "$params.outdir/miRDP2/$sample_id"
         input:
-        path gtf
         tuple val(sample_id), path(trimmed_pairs_ch)
-        tuple val(type), path(filter_ch)
+        path miRDP2
+        path genome_file
 
         output:
-        path '*.txt'
-        path '*.summary'
+        path "*"
 
         script:
         """
-        featureCounts -T 4 -s 2 -a $gtf -o ${sample_id}.mrna.featurecounts.txt ${filter_ch[1]}
-        featureCounts -T 4 -s 2 -a $gtf -o ${sample_id}.srna.featurecounts.txt ${filter_ch[0]}
+        bowtie-build --large-index --threads 16 -f ${genome_file} barley.genome
+        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/*'
+        zcat tmp.dir/* > Rfam.fa
+
+        bowtie-build --threads 16 -f Rfam.fa rfam_index
+        mv rfam_index.* ~/1.1.4/scripts/index/
+
+        pear -f ${trimmed_pairs_ch[0]} -r ${trimmed_pairs_ch[1]} -j 8 -m 40 -n 12 -o ${sample_id}_merged
+        fqtrim -l 12 -C  -n read -o non-redundant.fq -o non-redundant.fq ${sample_id}_merged.assembled.fastq
+        fastq_to_fasta -Q33 -i ${sample_id}_merged.assembled.non-redundant.fq -o merged.assembled.non-redundant.fa
+        mkdir -p "$params.outdir/miRDP2/${sample_id}/_merged.assembled.non-redundant"
+        bash ${miRDP2} -g ${genome_file} -x barley.genome-f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
         """
+}
+process GeneCount {
+cpus 16
+        publishDir "$params.outdir/mapped.overall"
+        input:
+        tuple val(sample_id), path(align_ch)
+
+        output:
+        path '*'
+        script:
+        """
+        echo "total reads overlapping" > '${sample_id}_overall.reads.mapped.txt'
+        perl -lane '\$s+=\$F[3] ;END {print \$s}' ${align_ch[4]} >> '${sample_id}_overall.reads.mapped.txt'
+        """
+}
+process prematrix{
+cpus 16
+        publishDir "$params.outdir/genematrix/tmp", mode: 'copy', pattern: "*_field4.txt"
+        input:
+        tuple val(sample_id), path(align_ch)
+
+        output:
+        path('*_field4.txt')
+
+        shell:
+        '''
+        echo !{sample_id} > '!{sample_id}_field4.txt'
+        egrep -v ^N !{align_ch[4]} |cut -f 4 >> !{sample_id}_field4.txt
+        '''
+}
+
+
+process matrix {
+cpus 16
+        publishDir "$params.outdir/genematrix"
+        input:
+        tuple val(sample_id), path(align_ch)
+        file(prematrix_ch)
+
+        output:
+        path('genematrix.txt')
+
+        shell:
+        '''
+        echo gene > 'genes.txt'
+        egrep -v ^N !{align_ch[4]} |cut -f 1 >> 'genes.txt'
+
+        ls !{prematrix_ch} > 'field4.txt'
+        paste 'genes.txt' $(printf "%s " $(cat 'field4.txt')) > 'genematrix.txt'
+        '''
 }
