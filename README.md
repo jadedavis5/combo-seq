@@ -39,10 +39,10 @@ $ params.reads = '/path/to/raw/reads/fa'
 $ params.miRDP2 = "/path/to/miRDP2" # [Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
 
 #run using:
-nextflow run workflow.nf
+$ nextflow run workflow.nf
 
 #if the run is interrupted, resume from last point using:
-nextflow run workflow.nf -resume
+$ nextflow run workflow.nf -resume
 ```
 [Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
 Include any essential instructions for:
