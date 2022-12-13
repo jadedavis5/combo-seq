@@ -3,8 +3,10 @@
 
 Combo-seq is an analysis program which can process raw FASTA/FASTQ sequencing reads produced using the NEXTFLEX® Combo-Seq™ mRNA/miRNA Kit. It performs (1) pair end read trimming, (2) quality analysis, (3) genome indexing and alignment, (4) miRDP2 miRNA identification, (5) separates sRNA from mRNA 
 and (6) creates a gene count matrix which can be used for further differential expression analysis.  
+
+its reproducible... saves your progress 
 - State if it is out-of-the-box user-friendly, so it’s clear to the user.
-- List its most useful/innovative/noteworthy features.
+
 - State its goals/what problem(s) it solves.
 - Note and briefly describe any key concepts (technical, philosophical, or both) important to the user’s understanding.
 - Link to any supplementary blog posts or project main pages.
@@ -21,6 +23,21 @@ and (6) creates a gene count matrix which can be used for further differential e
 - Keep it useful.
 
 ### Getting Started/Requirements/Prerequisites/Dependencies
+# Prerequisites
+
+
+``` 
+$ git clone https://github.com/jadedavis5/combo-seq
+$ cd combo-seq/
+$ nano workflow.nf
+
+# change parameters to desired input 
+$ params.genome_file = "/path/to/genome.fa"
+$ params.gtf_file = "/path/to/genome.gtf"
+$ params.outdir = "/path/to/outdirectory"
+$ params.reads = '/path/to/raw/reads/fa'
+$ params.miRDP2 = "/path/to/miRDP2" #[Download here]()
+```
 Include any essential instructions for:
 - Getting it
 - Installing It
