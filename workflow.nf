@@ -5,11 +5,10 @@
  */
 params.genome_file = "/data2/genome/barley_chrm1.fa"
 params.gtf_file = "/data2/star_index/barley_chrm1.gtf"
-params.multiqc = "/data/multiqc"
 params.outdir = "/data2/outdir"
 params.reads = '/data/Comboseq-Novaseq/fastqs/*R{1,2}_001.fastq.gz'
-params.bam = '/data2/outdir/aligned/*{1,2}Aligned.sortedByCoord.out.bam'
 params.miRDP2 = "/home/ubuntu/1.1.4/miRDP2-v1.1.4_pipeline.bash"
+
 log.info """
 RNASEQ-NF PIPELINE
 ==================
@@ -22,10 +21,6 @@ miRDP2:${params.miRDP2}
 """
 .stripIndent()
 
-/*
- * define the `index` process that creates a binary index
- * given the transcriptome file
- */
 
 workflow {
         read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
