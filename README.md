@@ -42,3 +42,5 @@ The minimum required dependancies to run Combo-Seq are:
 
 ## License
 ### idk what liscence to use https://choosealicense.com/
+
+### also should i have user input like genome file as a command line input or is it okay for them to go and change the script themsleves 
