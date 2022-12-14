@@ -8,7 +8,6 @@ params.gtf_file = "/data2/star_index/barley_chrm1.gtf"
 params.outdir = "/data2/outdir"
 params.reads = '/data/Comboseq-Novaseq/fastqs/*R{1,2}_001.fastq.gz'
 params.miRDP2 = "/home/ubuntu/1.1.4/miRDP2-v1.1.4_pipeline.bash"
-
 log.info """
 RNASEQ-NF PIPELINE
 ==================
@@ -16,11 +15,14 @@ genome: ${params.genome_file}
 gtf: ${params.gtf_file}
 outdir: ${params.outdir}
 reads:${params.reads}
-bam:${params.bam}
 miRDP2:${params.miRDP2}
 """
 .stripIndent()
 
+/*
+ * define the `index` process that creates a binary index
+ * given the transcriptome file
+ */
 
 workflow {
         read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
@@ -39,8 +41,8 @@ workflow {
         GeneCount(align_ch)
         prematrix_ch= prematrix(align_ch)
         matrix(align_ch, prematrix_ch.collect())
-        miRDP2(trimmed_pairs_ch, params.miRDP2, params.genome_file)
-
+        mirdp_ch= miRDP2(params.miRDP2, params.genome_file)
+        mirdp_ch.view()
 }
 
 process INDEX {
@@ -209,7 +211,29 @@ cpus 16
 
 process miRDP2 {
 cpus 16
-        publishDir "$params.outdir/miRDP2/$sample_id"
+        publishDir "$params.outdir/miRDP2"
+        input:
+        path miRDP2
+        path genome_file
+
+        output:
+        tuple val(type), path('*.mirdp')
+
+
+        script:
+        """
+        bowtie-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
+        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/*'
+        zcat tmp.dir/* > Rfam_fa.mirdp
+
+        bowtie-build --threads 16 -f Rfam_fa.mirdp rfam_index.mirdp
+        mv rfam_index.mirdp.* ~/1.1.4/scripts/index/
+        """
+}
+process miRID {
+cpus 16
+publishDir "$params.outdir/miRDP2/$sample_id"
+
         input:
         tuple val(sample_id), path(trimmed_pairs_ch)
         path miRDP2
@@ -220,20 +244,15 @@ cpus 16
 
         script:
         """
-        bowtie-build --large-index --threads 16 -f ${genome_file} barley.genome
-        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/*'
-        zcat tmp.dir/* > Rfam.fa
-
-        bowtie-build --threads 16 -f Rfam.fa rfam_index
-        mv rfam_index.* ~/1.1.4/scripts/index/
-
         pear -f ${trimmed_pairs_ch[0]} -r ${trimmed_pairs_ch[1]} -j 8 -m 40 -n 12 -o ${sample_id}_merged
         fqtrim -l 12 -C  -n read -o non-redundant.fq -o non-redundant.fq ${sample_id}_merged.assembled.fastq
         fastq_to_fasta -Q33 -i ${sample_id}_merged.assembled.non-redundant.fq -o merged.assembled.non-redundant.fa
         mkdir -p "$params.outdir/miRDP2/${sample_id}/_merged.assembled.non-redundant"
-        bash ${miRDP2} -g ${genome_file} -x barley.genome-f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
+        bash ${miRDP2} -g ${genome_file} -x barley.genome -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
         """
 }
+
+
 process GeneCount {
 cpus 16
         publishDir "$params.outdir/mapped.overall"
