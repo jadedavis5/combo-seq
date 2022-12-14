@@ -25,8 +25,13 @@ $ nextflow run workflow.nf
 #if the run is interrupted, resume from last point using:
 $ nextflow run workflow.nf -resume
 ```
-[Download here](https://sourceforge.net/projects/mirdp2/files/latest_version/)
+
 ### Dependencies
+The minimum required dependancies to run Combo-Seq are:
+
+* Bash >= 3.2 or Java >= 11
+* [Nextflow](https://github.com/nextflow-io/nextflow) >= 22.04.3
+* 
 
 
 
@@ -36,3 +41,7 @@ $ nextflow run workflow.nf -resume
 - IRC or Slack (if applicable)
 
 ## License
+
+## ?'s
+is there another way to add my dependancies in like a package manager idk or something so people don't have to download everything induviduallu or setup.py (https://github.com/brian-team/brian2)
+
