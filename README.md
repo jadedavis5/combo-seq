@@ -13,11 +13,11 @@ $ cd combo-seq/
 $ nano workflow.nf
 
 # change parameters to desired input 
-$ params.genome_file = "/path/to/genome.fa"
-$ params.gtf_file = "/path/to/genome.gtf"
-$ params.outdir = "/path/to/outdirectory"
-$ params.reads = '/path/to/raw/reads/fa'
-$ params.miRDP2 = "/path/to/miRDP2"
+params.genome_file = "/path/to/genome.fa"
+params.gtf_file = "/path/to/genome.gtf"
+params.outdir = "/path/to/outdirectory"
+params.reads = '/path/to/raw/reads/fa'
+params.miRDP2 = "/path/to/miRDP2"
 
 #run using:
 $ nextflow run workflow.nf
