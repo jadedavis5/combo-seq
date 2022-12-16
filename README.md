@@ -27,12 +27,17 @@ $ nextflow run workflow.nf -resume
 ```
 
 ### Dependencies
-The minimum required dependancies to run Combo-Seq are:
+To use this pipeline please download the folowing first: 
 #### idk if i am supposed to list them out like this or use a package manager
 * Bash >= 3.2 or Java >= 11
 * [Nextflow](https://github.com/nextflow-io/nextflow) >= 22.04.3
-* 
-
+* [STAR](https://github.com/alexdobin/STAR) >= 2.7.10a
+* [fqtrim](https://ccb.jhu.edu/software/fqtrim/) >= 0.9.7
+* [samtools](https://github.com/samtools/samtools) >= 1.10
+* [Bowtie](https://bowtie-bio.sourceforge.net/manual.shtml) >= 1.2.3
+* [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) >= 0.11.9
+* [MultiQC](https://multiqc.info/) 
+* [PEAR](https://cme.h-its.org/exelixis/web/software/pear/) >= 0.9.11
 
 
 ## Contact
