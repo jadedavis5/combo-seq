@@ -7,7 +7,7 @@ params.genome_file = "/data2/genome/barley_chrm1.fa"
 params.gtf_file = "/data2/star_index/barley_chrm1.gtf"
 params.outdir = "/data2/outdir"
 params.reads = '/data/Comboseq-Novaseq/fastqs/*R{1,2}_001.fastq.gz'
-params.miRDP2 = "/home/ubuntu/1.1.4/miRDP2-v1.1.4_pipeline.bash"
+params.miRDP2package = "/home/ubuntu/1.1.4/miRDP2-v1.1.4_pipeline.bash"
 log.info """
 RNASEQ-NF PIPELINE
 ==================
@@ -15,14 +15,10 @@ genome: ${params.genome_file}
 gtf: ${params.gtf_file}
 outdir: ${params.outdir}
 reads:${params.reads}
-miRDP2:${params.miRDP2}
+miRDP2package:${params.miRDP2package}
 """
 .stripIndent()
 
-/*
- * define the `index` process that creates a binary index
- * given the transcriptome file
- */
 
 workflow {
         read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
@@ -41,8 +37,10 @@ workflow {
         GeneCount(align_ch)
         prematrix_ch= prematrix(align_ch)
         matrix(align_ch, prematrix_ch.collect())
-        mirdp_ch= miRDP2(params.miRDP2, params.genome_file)
-        mirdp_ch.view()
+        // mirdp_ch= miRDP2(params.genome_file)
+        // mirdp_ch.view()
+        // miRID(trimmed_pairs_ch, params.miRDP2package, params.genome_file)
+        featureCounts(params.gtf_file, trimmed_pairs_ch, filter_ch)
 }
 
 process INDEX {
@@ -211,23 +209,24 @@ cpus 16
 
 process miRDP2 {
 cpus 16
-        publishDir "$params.outdir/miRDP2"
+        publishDir "$params.outdir/miRDP2", mode: 'copy', pattern: "bowtie.mirdp*"
+        publishDir "$params.miRDP2pathway/scripts/index/rfam_index", mode: 'copy', pattern: "rfam_index*"
         input:
-        path miRDP2
         path genome_file
 
         output:
-        tuple val(type), path('*.mirdp')
+        path('*')
 
 
         script:
         """
         bowtie-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
-        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/*'
-        zcat tmp.dir/* > Rfam_fa.mirdp
+        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/RF00001.fa.gz'
+        zcat tmp.dir/* > Rfam_fa
 
-        bowtie-build --threads 16 -f Rfam_fa.mirdp rfam_index.mirdp
-        mv rfam_index.mirdp.* ~/1.1.4/scripts/index/
+        bowtie-build --threads 16 -f Rfam_fa rfam_index
+        mv rfam_index.* ~/1.1.4/scripts/index/
+        echo 'DELETE THIS but i am adding so code runs again'
         """
 }
 process miRID {
@@ -236,7 +235,7 @@ publishDir "$params.outdir/miRDP2/$sample_id"
 
         input:
         tuple val(sample_id), path(trimmed_pairs_ch)
-        path miRDP2
+        path miRDP2pathway
         path genome_file
 
         output:
@@ -247,8 +246,8 @@ publishDir "$params.outdir/miRDP2/$sample_id"
         pear -f ${trimmed_pairs_ch[0]} -r ${trimmed_pairs_ch[1]} -j 8 -m 40 -n 12 -o ${sample_id}_merged
         fqtrim -l 12 -C  -n read -o non-redundant.fq -o non-redundant.fq ${sample_id}_merged.assembled.fastq
         fastq_to_fasta -Q33 -i ${sample_id}_merged.assembled.non-redundant.fq -o merged.assembled.non-redundant.fa
-        mkdir -p "$params.outdir/miRDP2/${sample_id}/_merged.assembled.non-redundant"
-        bash ${miRDP2} -g ${genome_file} -x barley.genome -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
+        bash ${miRDP2pathway} -g ${genome_file} -x "${params.outdir}/miRDP2/bowtie.mirdp" -f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
+        echo 'run again'
         """
 }
 
@@ -301,5 +300,29 @@ cpus 16
 
         ls !{prematrix_ch} > 'field4.txt'
         paste 'genes.txt' $(printf "%s " $(cat 'field4.txt')) > 'genematrix.txt'
+        '''
+}
+
+process featureCounts {
+cpus 16
+        tag "Finding gene overlap"
+        publishDir "$params.outdir/featurecounts/${sample_id}"
+        input:
+        path gtf
+        tuple val(sample_id), path(trimmed_pairs_ch)
+        tuple val(type), path(filter_ch)
+
+        output:
+        path '*.txt'
+        path '*.summary'
+
+        shell:
+        '''
+        mkdir '!{sample_id}'
+        samtools view -hf 0x2 !{filter_ch[1]} |samtools view -hF 0x100 |awk  '$9>50 || $9< -50 {print $0}' |samtools sort -n |samtools view -h > '!{sample_id}.mrna.bam'
+        featureCounts -p -M -B -t exon  -g gene_id -a !{gtf} -o !{sample_id}.mrna.counts.txt !{sample_id}.mrna.bam
+
+        samtools view -hf 0x2 !{filter_ch[0]} |samtools view -hF 0x100 |awk  '$9>50 || $9< -50 {print $0}' |samtools sort -n |samtools view -h > '!{sample_id}.srna.bam'
+        featureCounts -p -M -B -t exon  -g gene_id -a !{gtf} -o !{sample_id}.srna.counts.txt !{sample_id}.srna.bam
         '''
 }
