@@ -1,4 +1,4 @@
-* work in progress
+# work in progress
 ## Combo-seq
 
 Combo-seq is an analysis program which can process raw FASTA/FASTQ sequencing reads produced using the NEXTFLEX® Combo-Seq™ mRNA/miRNA Kit. It performs (1) pair end read trimming, (2) quality analysis, (3) genome indexing and alignment, (4) miRDP2 miRNA identification, (5) separates sRNA from mRNA 
