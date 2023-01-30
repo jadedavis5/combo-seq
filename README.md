@@ -31,7 +31,7 @@ params.outdir = "/path/to/outdirectory"
 params.reads = '/path/to/raw/reads/fa'
 params.miRDP2 = "/path/to/miRDP2"
 
-#also change adpaters in prcoess TRIM to desired 
+#also change adpaters in process TRIM to desired 
 
 #run using:
 $ nextflow run workflow.nf
