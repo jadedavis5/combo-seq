@@ -226,7 +226,6 @@ cpus 16
 
         bowtie-build --threads 16 -f Rfam_fa rfam_index
         mv rfam_index.* ~/1.1.4/scripts/index/
-        echo 'DELETE THIS but i am adding so code runs again'
         """
 }
 process miRID {
