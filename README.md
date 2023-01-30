@@ -18,6 +18,8 @@ To use this pipeline please download the folowing first:
 * [MultiQC](https://multiqc.info/) 
 * [PEAR](https://cme.h-its.org/exelixis/web/software/pear/) >= 0.9.11
 
+options: makefile, docker?, ruby gem?
+
 ### Running the pipeline 
 ``` 
 $ git clone https://github.com/jadedavis5/combo-seq
