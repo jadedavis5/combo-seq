@@ -18,7 +18,7 @@ To use this pipeline please download the folowing first:
 * [MultiQC](https://multiqc.info/) 
 * [PEAR](https://cme.h-its.org/exelixis/web/software/pear/) >= 0.9.11
 
-options: makefile, just a script to download them all, docker?, ruby gem?
+options: makefile, just a script to download them all, docker?, ruby gem?, submodules
 
 ### Running the pipeline 
 ``` 
