@@ -43,7 +43,7 @@ $ nextflow run workflow.nf -resume
 
 
 ## Contact
-Jade Davis email@here.com
+Jade Davis 20558259@student.curitn.edu.au
 
 ## License
 ### idk what liscence to use https://choosealicense.com/
