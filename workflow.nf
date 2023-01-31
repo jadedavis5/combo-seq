@@ -220,11 +220,11 @@ cpus 16
 
         script:
         """
-        bowtie-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
+        bowtie2-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
         wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/*'
         zcat tmp.dir/* > Rfam_fa
 
-        bowtie-build --threads 16 -f Rfam_fa rfam_index
+        bowtie2-build --threads 16 -f Rfam_fa rfam_index
         mv rfam_index.* ~/1.1.4/scripts/index/
         """
 }
