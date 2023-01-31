@@ -1,0 +1,10 @@
+{
+  "name": "combo-seq",
+  "version": "0.0.1",
+  "description": "Analyse Combo-Seq combined reads",
+  "scripts": [ "workflow.nf" ],
+  "install": "make install"
+  "dependencies": {
+        "samtools": "^1.10"
+        }
+}
