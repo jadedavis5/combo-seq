@@ -1,10 +1,8 @@
 {
   "name": "combo-seq",
-  "version": "0.0.1",
-  "description": "Analyse Combo-Seq combined reads",
-  "scripts": [ "workflow.nf" ],
-  "install": "make install"
-  "dependencies": {
-        "samtools": "^1.10"
-        }
+  "version": "0.1.0",
+  "description": "'Analyse Combo-Seq combined reads'",
+  "global": "1",
+  "install": "install -b workflow.nf /usr/local/bin/combo-seq",
+  "scripts": [ "workflow.nf" ]
 }
