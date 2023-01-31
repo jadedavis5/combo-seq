@@ -6,24 +6,17 @@ and (6) creates a gene count matrix which can be used for further differential e
 
 
 ## Getting Started
-### Dependencies
-To use this pipeline please download the folowing first: 
-* Bash >= 3.2 or Java >= 11
-* [Nextflow](https://github.com/nextflow-io/nextflow) >= 22.04.3
-* [STAR](https://github.com/alexdobin/STAR) >= 2.7.10a
-* [fqtrim](https://ccb.jhu.edu/software/fqtrim/) >= 0.9.7
-* [samtools](https://github.com/samtools/samtools) >= 1.10
-* [Bowtie](https://bowtie-bio.sourceforge.net/manual.shtml) >= 1.2.3
-* [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) >= 0.11.9
-* [MultiQC](https://multiqc.info/) 
-* [PEAR](https://cme.h-its.org/exelixis/web/software/pear/) >= 0.9.11
+This code requires Bash >= 3.2 or Java >= 11
 
-options: makefile, just a script to download them all, docker?, ruby gem?, submodules
-
-### Running the pipeline 
+1. Dependency download requires Miniconda, download [here](https://docs.conda.io/en/latest/miniconda.html)
+2. Run the following (or equivalent) in your command line to download workflow and dependancies:
 ``` 
 $ git clone https://github.com/jadedavis5/combo-seq
 $ cd combo-seq/
+$ bash installdep.sh
+```
+3. Running the pipeline:
+``` 
 $ nano workflow.nf
 
 # change parameters to desired input 
@@ -31,7 +24,7 @@ params.genome_file = "/path/to/genome.fa"
 params.gtf_file = "/path/to/genome.gtf"
 params.outdir = "/path/to/outdirectory"
 params.reads = '/path/to/raw/reads/fa'
-params.miRDP2 = "/path/to/miRDP2"
+params.miRDP2 = "/path/to/miRDP2-download"
 
 #also change adpaters in process TRIM to desired 
 
