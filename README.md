@@ -18,7 +18,8 @@ Usage of this pipeline on input reads prepared using the Combo-Seq kit presents 
 This code requires Bash >= 3.2 or Java >= 11
 
 1. Dependency download requires Miniconda, download [here](https://docs.conda.io/en/latest/miniconda.html)
-2. Run the following (or equivalent) in an empty directory to download workflow and dependancies:
+2. Download mirDeep2 using the instructions [here](https://sourceforge.net/projects/mirdp2/)
+3. Run the following (or equivalent) in an empty directory to download workflow and dependancies:
 ``` 
 $ git clone https://github.com/jadedavis5/combo-seq
 $ cd combo-seq/
