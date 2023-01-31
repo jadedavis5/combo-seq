@@ -37,9 +37,9 @@ workflow {
         GeneCount(align_ch)
         prematrix_ch= prematrix(align_ch)
         matrix(align_ch, prematrix_ch.collect())
-        // mirdp_ch= miRDP2(params.genome_file)
-        // mirdp_ch.view()
-        // miRID(trimmed_pairs_ch, params.miRDP2package, params.genome_file)
+        mirdp_ch= miRDP2(params.genome_file)
+        mirdp_ch.view()
+        miRID(trimmed_pairs_ch, params.miRDP2package, params.genome_file)
         featureCounts(params.gtf_file, trimmed_pairs_ch, filter_ch)
 }
 
