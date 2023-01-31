@@ -228,6 +228,8 @@ cpus 16
         mv rfam_index.* ~/1.1.4/scripts/index/
         """
 }
+
+//THIS PROCESS DOESN'T WORK PROPERLY YET
 process miRID {
 cpus 16
 publishDir "$params.outdir/miRDP2/$sample_id"
