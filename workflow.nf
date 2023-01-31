@@ -210,7 +210,7 @@ cpus 16
 process miRDP2 {
 cpus 16
         publishDir "$params.outdir/miRDP2", mode: 'copy', pattern: "bowtie.mirdp*"
-        publishDir "$params.miRDP2pathway/scripts/index/rfam_index", mode: 'copy', pattern: "rfam_index*"
+        publishDir "$params.miRDP2package/scripts/index/rfam_index", mode: 'copy', pattern: "rfam_index*"
         input:
         path genome_file
 
@@ -236,7 +236,7 @@ publishDir "$params.outdir/miRDP2/$sample_id"
 
         input:
         tuple val(sample_id), path(trimmed_pairs_ch)
-        path miRDP2pathway
+        path miRDP2package
         path genome_file
 
         output:
@@ -247,7 +247,7 @@ publishDir "$params.outdir/miRDP2/$sample_id"
         pear -f ${trimmed_pairs_ch[0]} -r ${trimmed_pairs_ch[1]} -j 8 -m 40 -n 12 -o ${sample_id}_merged
         fqtrim -l 12 -C  -n read -o non-redundant.fq -o non-redundant.fq ${sample_id}_merged.assembled.fastq
         fastq_to_fasta -Q33 -i ${sample_id}_merged.assembled.non-redundant.fq -o merged.assembled.non-redundant.fa
-        bash ${miRDP2pathway} -g ${genome_file} -x "${params.outdir}/miRDP2/bowtie.mirdp" -f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
+        bash ${miRDP2package} -g ${genome_file} -x "${params.outdir}/miRDP2/bowtie.mirdp" -f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
         echo 'run again'
         """
 }
