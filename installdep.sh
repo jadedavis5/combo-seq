@@ -1,8 +1,8 @@
-        conda install -c -y bioconda star
-        conda install -c -y bioconda fqtrim
-        conda install -c -y bioconda bowtie
-        conda install -c -y bioconda pear
-        conda install -c -y bioconda samtool
-        conda install -c -y bioconda nextflow
-        conda install -c -y bioconda fastqc
-        conda install -c -y bioconda multiqc
+        conda install -y -c bioconda star
+        conda install -y -c bioconda fqtrim
+        conda install -y -c bioconda bowtie
+        conda install -y -c bioconda pear
+        conda install -y -c bioconda samtool
+        conda install -y -c bioconda nextflow
+        conda install -y -c bioconda fastqc
+        conda install -y -c bioconda multiqc
