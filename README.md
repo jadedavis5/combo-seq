@@ -9,7 +9,7 @@ and (6) creates a gene count matrix which can be used for further differential e
 This code requires Bash >= 3.2 or Java >= 11
 
 1. Dependency download requires Miniconda, download [here](https://docs.conda.io/en/latest/miniconda.html)
-2. Run the following (or equivalent) in your command line to download workflow and dependancies:
+2. Run the following (or equivalent) in an empty directory to download workflow and dependancies:
 ``` 
 $ git clone https://github.com/jadedavis5/combo-seq
 $ cd combo-seq/
