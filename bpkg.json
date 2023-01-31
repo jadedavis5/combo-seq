@@ -1,8 +1,0 @@
-{
-  "name": "combo-seq",
-  "version": "0.1.0",
-  "description": "'Analyse Combo-Seq combined reads'",
-  "global": "1",
-  "install": "install -b workflow.nf /usr/local/bin/combo-seq",
-  "scripts": [ "workflow.nf" ]
-}
