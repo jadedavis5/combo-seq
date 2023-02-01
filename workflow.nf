@@ -7,7 +7,7 @@ params.genome_file = "/data2/genome/barley_chrm1.fa"
 params.gtf_file = "/data2/star_index/barley_chrm1.gtf"
 params.outdir = "/data2/outdir"
 params.reads = '/data/Comboseq-Novaseq/fastqs/*R{1,2}_001.fastq.gz'
-params.miRDP2package = "/home/ubuntu/1.1.4/miRDP2-v1.1.4_pipeline.bash"
+params.miRDP2package = "/home/ubuntu/1.1.4/"
 log.info """
 RNASEQ-NF PIPELINE
 ==================
@@ -37,9 +37,9 @@ workflow {
         GeneCount(align_ch)
         prematrix_ch= prematrix(align_ch)
         matrix(align_ch, prematrix_ch.collect())
-        mirdp_ch= miRDP2(params.genome_file)
+        mirdp_ch= miRDP2(params.genome_file, params.miRDP2package)
         mirdp_ch.view()
-        miRID(trimmed_pairs_ch, params.miRDP2package, params.genome_file)
+        miRID(trimmed_pairs_ch, params.miRDP2package, params.genome_file, mirdp_ch.collect())
         featureCounts(params.gtf_file, trimmed_pairs_ch, filter_ch)
 }
 
@@ -210,45 +210,46 @@ cpus 16
 process miRDP2 {
 cpus 16
         publishDir "$params.outdir/miRDP2", mode: 'copy', pattern: "bowtie.mirdp*"
-        publishDir "$params.miRDP2package/scripts/index/rfam_index", mode: 'copy', pattern: "rfam_index*"
         input:
         path genome_file
+        path miRDP2package
 
         output:
-        path('*')
+        path('bowtie.mirdp*')
 
 
         script:
         """
+        echo '${params.outdir}/miRDP2/bowtie.mirdp' > indexlocation.txt
         bowtie2-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
-        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/*'
+        wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/RF00001.fa.gz'
         zcat tmp.dir/* > Rfam_fa
 
-        bowtie2-build --threads 16 -f Rfam_fa rfam_index
-        mv rfam_index.* ~/1.1.4/scripts/index/
+        bowtie2-build --threads 16 -f Rfam_fa ${miRDP2package}/scripts/index/rfam_index
         """
 }
 
-//THIS PROCESS DOESN'T WORK PROPERLY YET
+// issue with this that miRDP2 can't find mature_index, but bowtie doesn't make one 
 process miRID {
-cpus 16
+cpus 8
 publishDir "$params.outdir/miRDP2/$sample_id"
 
         input:
         tuple val(sample_id), path(trimmed_pairs_ch)
         path miRDP2package
         path genome_file
+        path mirdp_ch
 
         output:
         path "*"
 
         script:
         """
-        pear -f ${trimmed_pairs_ch[0]} -r ${trimmed_pairs_ch[1]} -j 8 -m 40 -n 12 -o ${sample_id}_merged
-        fqtrim -l 12 -C  -n read -o non-redundant.fq -o non-redundant.fq ${sample_id}_merged.assembled.fastq
-        fastq_to_fasta -Q33 -i ${sample_id}_merged.assembled.non-redundant.fq -o merged.assembled.non-redundant.fa
-        bash ${miRDP2package} -g ${genome_file} -x "${params.outdir}/miRDP2/bowtie.mirdp" -f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
-        echo 'run again'
+        pear -j 8 -f ${trimmed_pairs_ch[0]} -r ${trimmed_pairs_ch[1]} -j 8 -m 40 -n 12 -o ${sample_id}_merged
+        fqtrim -p 8 -l 12 -C  -n read -o non-redundant.fq -o non-redundant.fq ${sample_id}_merged.assembled.fastq
+        fastq_to_fasta -Q33 -i ${sample_id}_merged.assembled.non-redundant.fq -o ${sample_id}_merged.assembled.non-redundant.fa
+        bash ${miRDP2package}/miRDP2-v1.1.4_pipeline.bash -T -g ${genome_file} -x $params.outdir/miRDP2/bowtie.mirdp -f -i ${sample_id}_merged.assembled.non-redundant.fa -p 16
+        cat ${mirdp_ch[0]} > test.txt  //need to take this away or incorporate another way 
         """
 }
 
