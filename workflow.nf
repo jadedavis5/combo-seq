@@ -19,9 +19,10 @@ miRDP2package:${params.miRDP2package}
 """
 .stripIndent()
 
+nextflow.preview.dsl=2
 
 workflow {
-        read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
+        read_pairs_ch = Channel.fromFilePairs( params.reads, checkIfExists: true )
         trimmed_pairs_ch = TRIM(read_pairs_ch)
         index = INDEX(params.genome_file, params.gtf_file)
 
