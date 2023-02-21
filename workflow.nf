@@ -222,11 +222,11 @@ cpus 16
         script:
         """
         echo '${params.outdir}/miRDP2/bowtie.mirdp' > indexlocation.txt
-        bowtie2-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
+        bowtie-build --large-index --threads 16 -f ${genome_file} bowtie.mirdp
         wget --directory-prefix=tmp.dir 'ftp://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/fasta_files/RF00001.fa.gz'
         zcat tmp.dir/* > Rfam_fa
 
-        bowtie2-build --threads 16 -f Rfam_fa ${miRDP2package}/scripts/index/rfam_index
+        bowtie-build --threads 16 -f Rfam_fa ${miRDP2package}/scripts/index/rfam_index
         """
 }
 
