@@ -1,0 +1,7 @@
+.nextflow*
+data*
+slurm*
+containers*
+cache/*
+slurm-*
+work/*
