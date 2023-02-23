@@ -230,8 +230,6 @@ cpus 16
         """
 }
 
-//issue with this that miRDP2 can't find mature_index, but bowtie doesn't make one (shown in script_err)
-//also it says that none of them are paired
 process miRID {
 cpus 8
 publishDir "$params.outdir/miRDP2/$sample_id"
