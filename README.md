@@ -13,6 +13,17 @@ Combo-seq is an analysis program which can process raw FASTA/FASTQ sequencing re
 
 Usage of this pipeline on input reads prepared using the Combo-Seq kit presents a workflow for sRNA/mRNA combined analysis which replaces the tradtional need to separetly analyse mRNA and sRNA samples, reducing cost and time input. 
 
+## Running the pipeline using `run.sh` (EXPERIMENTAL)
+The `run.sh` script is preferred to run the pipeline, and has additional dependencies separate to the pipeline:
+1. python3
+2. python3-toml
+
+The script loads "settings.toml", and uses two Python 3 scripts in the "bin" folder:
+1. `bin/generate_configs.py`
+2. `bin/toml_parser.py`
+
+The `run.sh` script is functional without Python 3 or the `toml`, but cannot autogenerate the Nextflow configs, most likely preventing the pipeline from functioning. In case that it is unable to, the pipeline automatically loads the pre-generated configs under `conf/generated`, tailored for Pawsey's supercomputer, Setonix.
+
 
 ## Getting Started
 This code requires Bash >= 3.2 or Java >= 11

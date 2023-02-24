@@ -1,0 +1,4 @@
+genome: "${projectDir}/data/genomes/genome.fa"
+gtf: "${projectDir}/data/gtf/whole.gtf"
+outdir: "data"
+reads: "${projectDir}/data/reads/*R{1,2}*.fastq.gz"

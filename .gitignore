@@ -1,7 +1,11 @@
 .nextflow*
+slurm-*
+
 data*
-slurm*
 containers*
 cache/*
-slurm-*
 work/*
+
+bin/nextflow
+
+slurm*
