@@ -1,0 +1,61 @@
+# Configuration of Nextflow processes
+[process]
+executor = "local"
+
+# Other pipeline configurations
+[time]
+bin = "/usr/bin/time"
+flags = "-v"
+
+# Container engine parameters
+[container]
+# Container engine binary
+# Default: apptainer
+bin = "apptainer"
+
+# Container engine options
+# Default:
+opts = ""
+
+# Container runtime command
+# Default: exec
+exec = "exec"
+
+# Options to append to the runtime command
+# Default:
+exec_opts = ""
+
+# Enable the usage of a single container for the pipeline, see entry below to
+# set path to the container.
+# Default: true
+monolithic = true
+
+# Path to a container containing all binaries and tools used for the pipeline,
+# only functional if monolithic is set to true, otherwise containers are loaded
+# per-module.
+# Default: NA
+path = "${projectDir}/containers/comboseq.sif"
+
+
+# Module settings
+[fastqc]
+
+
+[fastp]
+# Resources
+cores = 8
+memory = "60G"
+
+# Container options
+container = true
+path = "${projectDir}/containers/comboseq.sif"
+
+# Command
+bin = "fastp"
+
+
+[template]
+cores = 1
+memory = "1G"
+time = "1.hour"
+queue = "work"

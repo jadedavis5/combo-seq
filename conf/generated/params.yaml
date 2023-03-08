@@ -1,4 +1,36 @@
-genome: "${projectDir}/data/genomes/genome.fa"
-gtf: "${projectDir}/data/gtf/whole.gtf"
-outdir: "data"
-reads: "${projectDir}/data/reads/*R{1,2}*.fastq.gz"
+data:
+  out: "${projectDir}/data"
+  reads: "${projectDir}/data/reads"
+  glob: "*R{1,2}*.fastq.gz"
+  time: "${projectDir}/data/time"
+
+process:
+  executor: "local"
+
+time:
+  bin: "/usr/bin/time"
+  flags: "-v"
+
+container:
+  bin: "apptainer"
+  opts: ""
+  exec: "exec"
+  exec_opts: ""
+  monolithic: "True"
+  path: "${projectDir}/containers/comboseq.sif"
+
+fastqc:
+
+fastp:
+  cores: "8"
+  memory: "60G"
+  container: "True"
+  path: "${projectDir}/containers/comboseq.sif"
+  bin: "fastp"
+
+template:
+  cores: "1"
+  memory: "1G"
+  time: "1.hour"
+  queue: "work"
+

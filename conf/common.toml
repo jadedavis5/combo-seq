@@ -4,7 +4,9 @@
 # Location of data, either relative to the "workflow.nf" script, as an
 # absolute path, or prefixed with ${projectDir}
 [data]
-genome = "${projectDir}/data/genomes/genome.fa"
-gtf = "${projectDir}/data/gtf/whole.gtf"
-outdir = "data"
-reads = "${projectDir}/data/reads/*R{1,2}*.fastq.gz"
+out = "${projectDir}/data"
+
+reads = "${projectDir}/data/reads"
+glob = "*R{1,2}*.fastq.gz"
+
+time = "${projectDir}/data/time"

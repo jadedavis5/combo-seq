@@ -7,22 +7,22 @@
 # Author - Yutathkarn Coles
 # Email  - danielcoles1605@gmail.com
 #
-# Wrapper script written in Bash that runs Nextflow with functionault parameters,
+# Wrapper script written in Bash that runs Nextflow with default parameters,
 # including loading profile-specific configs and parameters
 # 
 
 SCRIPT="workflow.nf"
 NF_OPTS=""
 
-# Nextflow paramters
-NF="bin/nextflow"
-PY="python3"
-
+# Python settings
 # Set to a Python virtual environment, or comment out to disable
 PYENV="containers/pipeline"
+PY="python3"
 
 # Enable auto-generation of Nextflow configs
 AUTOGEN="True"
+CONF_GEN="bin/generate_configs.py"
+CONF_GET="bin/toml_parser.py"
 
 
 # *** DO NOT EDIT BELOW THIS LINE ***
@@ -48,8 +48,6 @@ function load_venv() {
 function autogen() {
 	# Relies on a functional Python 3 installation, and python3-toml
 	# Python binaries
-	CONF_GEN="bin/generate_configs.py"
-	CONF_GET="bin/toml_parser.py"
 	CONF_DIR=$(settings_get "$_CONF")
 
 	# Get location of Nextflow config and parameters
@@ -89,6 +87,8 @@ _PARAMS="files.params"
 _CLEAN_LOGS="nextflow.clean_logs"
 _RESUME="nextflow.resume"
 _PYENV="$PYENV/bin/activate"
+_NF="files.nf"
+_PY="files.py3"
 
 # Data types
 # Boolean string for true
@@ -113,9 +113,13 @@ NO_TOML="""
 Python 3 appears to be unable to load the module 'toml'
 $NO_GEN"""
 
+# Binaries
+NF="$(settings_get $_NF)"
+# PY="$(settings_get $_PY)"
+
 
 # Load Python 3 virtual environment, else use host Python 3
-load_venv
+if [[ -n "$PYENV" ]]; then load_venv; fi
 
 # Environment checks
 # Check that Python 3 and python3-toml are functioning

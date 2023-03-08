@@ -42,9 +42,21 @@ conf_common = load_toml(toml_common)
 
 # Write yaml file
 with open(params, "w") as f:
-    for i in conf_common["data"]:
-        f.write(f"{i}: \"{conf_common['data'][i]}\"\n")
+    for i in conf_common:
+        f.write(f"{i}:\n")
+        for j in conf_common[i]:
+            f.write(f"  {j}: \"{conf_common[i][j]}\"\n")
+        f.write("\n")
     f.close()
+
+with open(params, "a") as f:
+    for i in conf:
+        f.write(f"{i}:\n")
+        for j in conf[i]:
+            f.write(f"  {j}: \"{conf[i][j]}\"\n")
+        f.write("\n")
+    f.close()
+
 
 # Write Nextflow configuration
 with open(nf_conf, "w") as f:

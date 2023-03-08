@@ -22,7 +22,7 @@ The script loads "settings.toml", and uses two Python 3 scripts in the "bin" fol
 1. `bin/generate_configs.py`
 2. `bin/toml_parser.py`
 
-The `run.sh` script is functional without Python 3 or the `toml`, but cannot autogenerate the Nextflow configs, most likely preventing the pipeline from functioning. In case that it is unable to, the pipeline automatically loads the pre-generated configs under `conf/generated`, tailored for Pawsey's supercomputer, Setonix.
+The `run.sh` script is functional without Python 3 or its TOML module, but cannot autogenerate the Nextflow configs, most likely preventing the pipeline from functioning. In case that it is unable to, the pipeline automatically loads the pre-generated configs under `conf/generated`, tailored for Pawsey's supercomputer, Setonix.
 
 
 ## Getting Started
@@ -56,6 +56,9 @@ $ nextflow run workflow.nf
 $ nextflow run workflow.nf -resume
 ```
 
+
+## Pipeline architecture
+An automatic configuration generation system, using TOML templates to configure the pipeline, is available over the built-in Nextflow configurations. Additionally, the pipeline makes use of DSL2 modules, which are stored under `./modules`.
 
 
 ## Contact
