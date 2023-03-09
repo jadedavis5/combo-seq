@@ -5,6 +5,10 @@ time:
   bin: "/usr/bin/time"
   flags: "-v"
 
+parallel:
+  bin: "parallel"
+  flags: ""
+
 container:
   bin: "apptainer"
   opts: ""
@@ -12,6 +16,12 @@ container:
   exec_opts: ""
   monolithic: "True"
   path: "${projectDir}/containers/comboseq.sif"
+
+extract:
+  cores: "8"
+  memory: "8G"
+  container: "False"
+  bin: "gunzip"
 
 fastqc:
 
@@ -24,9 +34,11 @@ fastp:
   quality: "20"
   autodetect: "True"
 
-template:
-  cores: "1"
-  memory: "1G"
-  time: "1.hour"
-  queue: "work"
+data:
+  path: "${projectDir}/data"
+  out: "${projectDir}/data"
+  reads: "reads"
+  glob: "*R{1,2}*.fastq.gz"
+  adapters: "adapters.fasta"
+  time: "time"
 

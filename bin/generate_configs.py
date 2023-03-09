@@ -41,17 +41,22 @@ conf = load_toml(toml_in)
 conf_common = load_toml(toml_common)
 
 
-# Build a dict
-# Check for overlapping keys between common and profile configurations
+# Merge dictionaries
+x = set()
 for k1 in conf:
     v1 = conf[k1]
+    # Check for shared keys
     for k2 in conf_common:
-        v2 = conf_common[k2]
-        if k1 == k2:
-            for x in v2:
-                v1[x] = v2[x]
+        if k2 in conf:
+            if k2 == k1:
+                v2 = conf_common[k2]
+                for i in v2:
+                    v1[i] = v2[i]
         else:
-            print(f"{k2}: {v2}")
+            x.add(k2)
+
+for k in x:
+    conf[k] = conf_common[k]
 
 
 # Write YAML file

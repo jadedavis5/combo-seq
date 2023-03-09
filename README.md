@@ -25,40 +25,15 @@ The script loads "settings.toml", and uses two Python 3 scripts in the "bin" fol
 The `run.sh` script is functional without Python 3 or its TOML module, but cannot autogenerate the Nextflow configs, most likely preventing the pipeline from functioning. In case that it is unable to, the pipeline automatically loads the pre-generated configs under `conf/generated`, tailored for Pawsey's supercomputer, Setonix.
 
 
+## Dependencies
+- libarchive-tools (specifically `bsdtar`)
+
+
 ## Getting Started
-This code requires Bash >= 3.2 or Java >= 11
-
-1. Dependency download requires Miniconda, download [here](https://docs.conda.io/en/latest/miniconda.html)
-2. Download mirDeep2 using the instructions [here](https://sourceforge.net/projects/mirdp2/)
-3. Run the following (or equivalent) in an empty directory to download workflow and dependancies:
-``` 
-$ git clone https://github.com/jadedavis5/combo-seq
-$ cd combo-seq/
-$ bash installdep.sh
-```
-3. Running the pipeline:
-``` 
-$ nano workflow.nf
-
-# change parameters to desired input 
-params.genome_file = "/path/to/genome.fa"
-params.gtf_file = "/path/to/genome.gtf"
-params.outdir = "/path/to/outdirectory"
-params.reads = '/path/to/raw/reads/fa'
-params.miRDP2 = "/path/to/miRDP2-download"
-
-#also change adpaters in process TRIM to desired 
-
-#run using:
-$ nextflow run workflow.nf
-
-#if the run is interrupted, resume from last point using:
-$ nextflow run workflow.nf -resume
-```
 
 
 ## Pipeline architecture
-An automatic configuration generation system, using TOML templates to configure the pipeline, is available over the built-in Nextflow configurations. Additionally, the pipeline makes use of DSL2 modules, which are stored under `./modules`.
+An automatic configuration generation system, using TOML templates to configure the pipeline, is available over the built-in Nextflow configurations. Additionally, the pipeline makes use of DSL2 modules, stored under `./modules`.
 
 
 ## Contact

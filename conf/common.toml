@@ -11,7 +11,7 @@ reads = "reads"
 glob = "*R{1,2}*.fastq.gz"
 adapters = "adapters.fasta"
 
-time = "${projectDir}/data/time"
+time = "time"
 
 # Module settings
 [fastp]

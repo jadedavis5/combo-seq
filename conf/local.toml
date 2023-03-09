@@ -7,6 +7,11 @@ executor = "local"
 bin = "/usr/bin/time"
 flags = "-v"
 
+[parallel]
+bin = "parallel"
+flags = ""
+
+
 # Container engine parameters
 [container]
 # Container engine binary
@@ -38,6 +43,20 @@ path = "${projectDir}/containers/comboseq.sif"
 
 
 # Module settings
+[extract]
+# Resources
+process = "local"
+cores = 8
+memory = "8G"
+
+# Container options
+container = false
+
+# Command
+bin = "pigz"
+flags = ""
+
+
 [fastqc]
 
 
@@ -53,9 +72,3 @@ path = "${projectDir}/containers/comboseq.sif"
 # Command
 bin = "fastp"
 
-
-[template]
-cores = 1
-memory = "1G"
-time = "1.hour"
-queue = "work"
