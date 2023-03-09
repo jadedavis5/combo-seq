@@ -50,6 +50,8 @@ for k1 in conf:
         if k1 == k2:
             for x in v2:
                 v1[x] = v2[x]
+        else:
+            print(f"{k2}: {v2}")
 
 
 # Write YAML file
