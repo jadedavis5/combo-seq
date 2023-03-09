@@ -1,15 +1,3 @@
-data:
-  path: "${projectDir}/data"
-  out: "${projectDir}/data"
-  reads: "reads"
-  glob: "*R{1,2}*.fastq.gz"
-  adapters: "adapters.fasta"
-  time: "${projectDir}/data/time"
-
-fastp:
-  quality: "20"
-  autodetect: "True"
-
 process:
   executor: "local"
 
@@ -33,6 +21,8 @@ fastp:
   container: "True"
   path: "${projectDir}/containers/comboseq.sif"
   bin: "fastp"
+  quality: "20"
+  autodetect: "True"
 
 template:
   cores: "1"
