@@ -1,8 +1,14 @@
 data:
+  path: "${projectDir}/data"
   out: "${projectDir}/data"
-  reads: "${projectDir}/data/reads"
+  reads: "reads"
   glob: "*R{1,2}*.fastq.gz"
+  adapters: "adapters.fasta"
   time: "${projectDir}/data/time"
+
+fastp:
+  quality: "20"
+  autodetect: "True"
 
 process:
   executor: "local"

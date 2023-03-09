@@ -4,9 +4,21 @@
 # Location of data, either relative to the "workflow.nf" script, as an
 # absolute path, or prefixed with ${projectDir}
 [data]
+path = "${projectDir}/data"
 out = "${projectDir}/data"
 
-reads = "${projectDir}/data/reads"
+reads = "reads"
 glob = "*R{1,2}*.fastq.gz"
+adapters = "adapters.fasta"
 
 time = "${projectDir}/data/time"
+
+# Module settings
+[fastp]
+# Sequence quality cutoff
+# Default: 20
+quality = 20
+
+# Autodetection of adapter sequences
+# Default: false
+autodetect = true

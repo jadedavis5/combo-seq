@@ -40,6 +40,8 @@ toml_in = args[1]
 conf = load_toml(toml_in)
 conf_common = load_toml(toml_common)
 
+# Build a dict
+
 # Write yaml file
 with open(params, "w") as f:
     for i in conf_common:

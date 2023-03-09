@@ -1,9 +1,11 @@
 #!/usr/bin/env nextflow
 
-/* Pipeline upgrade notes*/
-
 // Nextflow configuration
 nextflow.enable.dsl = 2
+
+
+// Variables
+reads = "${params.data.path}/${params.data.reads}/${params.data.glob}"
 
 
 log.info """
@@ -11,10 +13,7 @@ log.info """
 # - ComboSeq Nextflow Pipeline - #
 # ============================== #
 
-> genome:	${params.data.genome}
-> gtf:  	${params.data.gtf}
-> out:  	${params.data.out}
-> reads:	${params.data.reads}/${params.data.glob}
+> reads:	${reads}
 """
 .stripIndent()
 
@@ -25,7 +24,7 @@ include {module as FASTP} from "./modules/fastp/main.nf"
 
 
 // Channels
-reads_pe = Channel.fromFilePairs("${params.data.reads}/${params.data.glob}")
+reads_pe = Channel.fromFilePairs(reads)
 
 
 workflow {

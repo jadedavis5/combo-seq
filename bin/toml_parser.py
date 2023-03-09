@@ -15,13 +15,10 @@ file = sys.argv[1]
 keys = sys.argv[2].split(".")
 
 with open(file, "r") as f:
-    tf = toml.load(file)
+    x = toml.load(file)
     f.close()
 
-for i in range(0, len(keys)):
-    key = keys[i]
-    if i == 0:
-        last_key = tf[key]
-    else:
-        last_key = last_key[key]
-print(last_key)
+key = x[keys[0]]
+for i in range(1, len(keys)):
+    key = key[keys[i]]
+print(key)
