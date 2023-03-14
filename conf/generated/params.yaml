@@ -10,35 +10,67 @@ parallel:
   flags: ""
 
 container:
-  bin: "apptainer"
+  bin: "./"
   opts: ""
-  exec: "exec"
+  exec: ""
   exec_opts: ""
   monolithic: "True"
   path: "${projectDir}/containers/comboseq.sif"
 
 extract:
+  process: "local"
   cores: "8"
   memory: "8G"
   container: "False"
-  bin: "gunzip"
+  bin: "pigz"
+  flags: ""
 
 fastqc:
 
 fastp:
   cores: "8"
   memory: "60G"
-  container: "True"
+  container: "False"
   path: "${projectDir}/containers/comboseq.sif"
   bin: "fastp"
   quality: "20"
-  autodetect: "True"
+  autodetect: "False"
+  compress: "True"
+  compress_level: "5"
+
+star:
+  cores: "8"
+  memory: "60G"
+  container: "False"
+  path: "${projectDir}/containers/comboseq.sif"
+  bin: "fastp"
 
 data:
   path: "${projectDir}/data"
   out: "${projectDir}/data"
-  reads: "reads"
+  reads: "reads-limited"
+  reads_unzipped: "reads-unzipped"
   glob: "*R{1,2}*.fastq.gz"
+  glob_unzipped: "*R{1,2}*.fastq"
   adapters: "adapters.fasta"
   time: "time"
+
+files:
+  conf: "conf"
+  nf: "bin/nextflow"
+  py3: "python3"
+  config: "conf/generated/nextflow.conf"
+  params: "conf/generated/params.yaml"
+  common: "conf/common.toml"
+
+workflow:
+  skip_extract: "True"
+  compress: "True"
+
+nextflow:
+  clean_logs: "True"
+  resume: "True"
+
+profile:
+  active: "local"
 

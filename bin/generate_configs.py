@@ -76,6 +76,14 @@ with open(params, "w") as f:
         f.write("\n")
     f.close()
 
+with open(params, "a") as f:
+    for i in settings:
+        f.write(f"{i}:\n")
+        for j in settings[i]:
+            f.write(f"  {j}: \"{settings[i][j]}\"\n")
+        f.write("\n")
+    f.close()
+
 
 # Write Nextflow configuration
 with open(nf_conf, "w") as f:

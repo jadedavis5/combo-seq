@@ -4,7 +4,6 @@
 
 
 [files]
-
 # Path to the pipeline config folder
 # Default: "conf"
 conf = "conf"
@@ -27,9 +26,19 @@ config = "conf/generated/nextflow.conf"
 # Default: "conf/generated/params.yaml"
 params = "conf/generated/params.yaml"
 
-# Share profile configuration
+# Shared profile configuration
 # Default: "conf/common.toml"
 common = "conf/common.toml"
+
+
+[workflow]
+# Use manually extracted reads
+# Default: true
+skip_extract = true
+
+# Compress data
+# Default: true
+compress = true
 
 
 # Nextflow configuration settings

@@ -15,8 +15,8 @@ flags = ""
 # Container engine parameters
 [container]
 # Container engine binary
-# Default: apptainer
-bin = "apptainer"
+# Default: ./
+bin = "./"
 
 # Container engine options
 # Default:
@@ -24,7 +24,7 @@ opts = ""
 
 # Container runtime command
 # Default: exec
-exec = "exec"
+exec = ""
 
 # Options to append to the runtime command
 # Default:
@@ -66,9 +66,22 @@ cores = 8
 memory = "60G"
 
 # Container options
-container = true
+container = false
+direct = true
 path = "${projectDir}/containers/comboseq.sif"
 
 # Command
 bin = "fastp"
 
+
+[star]
+# Resources
+cores = 8
+memory = "60G"
+
+# Container options
+container = false
+path = "${projectDir}/containers/comboseq.sif"
+
+# Command
+bin = "fastp"

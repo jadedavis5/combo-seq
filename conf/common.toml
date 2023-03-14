@@ -7,8 +7,11 @@
 path = "${projectDir}/data"
 out = "${projectDir}/data"
 
-reads = "reads"
+reads = "reads-limited"
+reads_unzipped = "reads-unzipped"
+
 glob = "*R{1,2}*.fastq.gz"
+glob_unzipped = "*R{1,2}*.fastq"
 adapters = "adapters.fasta"
 
 time = "time"
@@ -21,4 +24,13 @@ quality = 20
 
 # Autodetection of adapter sequences
 # Default: false
-autodetect = true
+autodetect = false
+
+# Compression of reads, only effective if compression is enabled in
+# settings.toml
+# Default: true
+compress = true
+
+# Compression level
+# Default: 5
+compress_level = 5
