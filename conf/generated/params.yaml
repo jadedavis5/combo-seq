@@ -10,50 +10,76 @@ parallel:
   flags: ""
 
 container:
-  bin: "./"
+  bin: "apptainer"
   opts: ""
-  exec: ""
+  exec: "exec"
   exec_opts: ""
   monolithic: "True"
-  path: "${projectDir}/containers/comboseq.sif"
+  path: "${projectDir}/containers/comboseq"
 
 extract:
   process: "local"
   cores: "8"
-  memory: "8G"
+  memory: "8"
   container: "False"
   bin: "pigz"
   flags: ""
 
-fastqc:
-
 fastp:
-  cores: "8"
-  memory: "60G"
+  cores: "2"
+  memory: "2"
+  buffer: "4"
   container: "False"
+  direct: "False"
   path: "${projectDir}/containers/comboseq.sif"
   bin: "fastp"
+  flags: ""
   quality: "20"
+  trimf: "10"
+  trimt: "0"
   autodetect: "False"
   compress: "True"
   compress_level: "5"
 
 star:
   cores: "8"
-  memory: "60G"
-  container: "False"
+  memory: "16"
+  container: "True"
   path: "${projectDir}/containers/comboseq.sif"
-  bin: "fastp"
+  bin: "STAR"
+  flags: ""
+
+fastqc:
+  cores: "1"
+  memory: "-1"
+  container: "True"
+  direct: "False"
+  path: "${projectDir/containers/comboseq.sif}"
+  bin: "fastqc"
+  flags: ""
+
+multiqc:
+  cores: "1"
+  memory: "1"
+  container: "True"
+  direct: "False"
+  path: "${projectDir/containers/comboseq.sif}"
+  bin: "multiqc"
+  flags: ""
 
 data:
   path: "${projectDir}/data"
   out: "${projectDir}/data"
-  reads: "reads-limited"
+  reports: "${projectDir}/reports"
+  reads: "reads"
   reads_unzipped: "reads-unzipped"
+  reads_trimmed: "reads-trimmed"
   glob: "*R{1,2}*.fastq.gz"
   glob_unzipped: "*R{1,2}*.fastq"
   adapters: "adapters.fasta"
   time: "time"
+  fastp: "fastp"
+  fastqc: "fastqc"
 
 files:
   conf: "conf"

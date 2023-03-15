@@ -1,4 +1,11 @@
 # Configuration of Nextflow processes
+#
+# CPU values set to 0 are automatically set to the maximum available threads on
+# the host system, set the value to number of threads
+# Memory values set to 0 are automatically set to the maximum allocable memory
+# on the host system, values set to -1 use memory allocation behaviour
+# determined by the respective module, set the value to gigabytes (GB) of memory
+
 [process]
 executor = "local"
 
@@ -16,7 +23,7 @@ flags = ""
 [container]
 # Container engine binary
 # Default: ./
-bin = "./"
+bin = "apptainer"
 
 # Container engine options
 # Default:
@@ -24,7 +31,7 @@ opts = ""
 
 # Container runtime command
 # Default: exec
-exec = ""
+exec = "exec"
 
 # Options to append to the runtime command
 # Default:
@@ -39,7 +46,7 @@ monolithic = true
 # only functional if monolithic is set to true, otherwise containers are loaded
 # per-module.
 # Default: NA
-path = "${projectDir}/containers/comboseq.sif"
+path = "${projectDir}/containers/comboseq"
 
 
 # Module settings
@@ -47,9 +54,9 @@ path = "${projectDir}/containers/comboseq.sif"
 # Resources
 process = "local"
 cores = 8
-memory = "8G"
+memory = 8
 
-# Container options
+# Container options, corrects mismatched reads on alignment
 container = false
 
 # Command
@@ -57,31 +64,63 @@ bin = "pigz"
 flags = ""
 
 
-[fastqc]
-
-
 [fastp]
 # Resources
-cores = 8
-memory = "60G"
+# Buffer is used for combining combining samples when using a batch allocator,
+# currently not implemented
+cores = 4
+memory = 2
+buffer = 4
 
 # Container options
 container = false
-direct = true
+direct = false
 path = "${projectDir}/containers/comboseq.sif"
 
 # Command
 bin = "fastp"
+flags = ""
 
 
 [star]
 # Resources
 cores = 8
-memory = "60G"
+memory = 16
 
 # Container options
-container = false
+container = true
 path = "${projectDir}/containers/comboseq.sif"
 
 # Command
-bin = "fastp"
+bin = "STAR"
+flags = ""
+
+
+[fastqc]
+# Resources
+cores = 1
+memory = -1
+
+# Container options
+container = true
+direct = false
+path = "${projectDir/containers/comboseq.sif}"
+
+# Command
+bin = "fastqc"
+flags = ""
+
+
+[multiqc]
+# Resources
+cores = 1
+memory = 1
+
+# Container options
+container = true
+direct = false
+path = "${projectDir/containers/comboseq.sif}"
+
+# Command
+bin = "multiqc"
+flags = ""

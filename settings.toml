@@ -32,7 +32,7 @@ common = "conf/common.toml"
 
 
 [workflow]
-# Use manually extracted reads
+# Set to false to use manually extracted reads
 # Default: true
 skip_extract = true
 

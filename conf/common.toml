@@ -6,21 +6,36 @@
 [data]
 path = "${projectDir}/data"
 out = "${projectDir}/data"
+reports = "${projectDir}/reports"
 
-reads = "reads-limited"
+reads = "reads"
+# reads = "reads-small" # Used for pipeline testing
+# reads = "reads-limited"
 reads_unzipped = "reads-unzipped"
+reads_trimmed = "reads-trimmed"
 
 glob = "*R{1,2}*.fastq.gz"
 glob_unzipped = "*R{1,2}*.fastq"
 adapters = "adapters.fasta"
 
 time = "time"
+fastp = "fastp"
+fastqc = "fastqc"
+
 
 # Module settings
 [fastp]
 # Sequence quality cutoff
 # Default: 20
 quality = 20
+
+# Number of bases to trim from the front
+# Default: 4
+trimf = 10
+
+# Number of bases to trim from the tail
+# Default: 0
+trimt = 0
 
 # Autodetection of adapter sequences
 # Default: false
@@ -34,3 +49,4 @@ compress = true
 # Compression level
 # Default: 5
 compress_level = 5
+
