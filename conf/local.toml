@@ -50,6 +50,11 @@ path = "${projectDir}/containers/comboseq"
 
 
 # Module settings
+[tools]
+bc = "bc"
+wc = "wc"
+
+
 [extract]
 # Resources
 process = "local"
@@ -64,12 +69,27 @@ bin = "pigz"
 flags = ""
 
 
+[samtools]
+# Resources
+cores = 4
+memory = 8
+
+# Container options
+container = true
+direct = false
+path = ""
+
+# Command
+bin = "fastp"
+flags = ""
+
+
 [fastp]
 # Resources
 # Buffer is used for combining combining samples when using a batch allocator,
 # currently not implemented
 cores = 4
-memory = 2
+memory = -1
 buffer = 4
 
 # Container options
@@ -102,7 +122,7 @@ cores = 1
 memory = -1
 
 # Container options
-container = true
+container = false
 direct = false
 path = "${projectDir/containers/comboseq.sif}"
 

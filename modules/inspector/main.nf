@@ -14,13 +14,13 @@ process module {
     // queue module.queue
 
     input:
-    tuple val(x)
+    tuple val(id), path("*")
 
     output:
     stdout
 
     shell:
     '''
-    echo "!{x}"
+    find .
     '''
 }

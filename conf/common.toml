@@ -7,20 +7,32 @@
 path = "${projectDir}/data"
 out = "${projectDir}/data"
 reports = "${projectDir}/reports"
+logs = "${projectDir}/logs"
 
-reads = "reads"
+# Reads
+reads = "reads" # Path in data folder
 # reads = "reads-small" # Used for pipeline testing
 # reads = "reads-limited"
 reads_unzipped = "reads-unzipped"
 reads_trimmed = "reads-trimmed"
+reads_length = "150" # Length of reads
 
 glob = "*R{1,2}*.fastq.gz"
 glob_unzipped = "*R{1,2}*.fastq"
+
+# Genomes
+# Expects files with the base name "genome" (i.e. genome.fasta, genome.gtf)
+genomes = "genomes" # Path in data folder
+fungi = "ptr-m4"
+plant = "wheat"
+
+# Adapters
 adapters = "adapters.fasta"
 
 time = "time"
 fastp = "fastp"
 fastqc = "fastqc"
+star = "star"
 
 
 # Module settings

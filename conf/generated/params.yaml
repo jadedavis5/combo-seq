@@ -17,6 +17,10 @@ container:
   monolithic: "True"
   path: "${projectDir}/containers/comboseq"
 
+tools:
+  bc: "bc"
+  wc: "wc"
+
 extract:
   process: "local"
   cores: "8"
@@ -25,9 +29,18 @@ extract:
   bin: "pigz"
   flags: ""
 
+samtools:
+  cores: "4"
+  memory: "8"
+  container: "True"
+  direct: "False"
+  path: ""
+  bin: "fastp"
+  flags: ""
+
 fastp:
-  cores: "2"
-  memory: "2"
+  cores: "4"
+  memory: "-1"
   buffer: "4"
   container: "False"
   direct: "False"
@@ -52,7 +65,7 @@ star:
 fastqc:
   cores: "1"
   memory: "-1"
-  container: "True"
+  container: "False"
   direct: "False"
   path: "${projectDir/containers/comboseq.sif}"
   bin: "fastqc"
@@ -71,15 +84,21 @@ data:
   path: "${projectDir}/data"
   out: "${projectDir}/data"
   reports: "${projectDir}/reports"
+  logs: "${projectDir}/logs"
   reads: "reads"
   reads_unzipped: "reads-unzipped"
   reads_trimmed: "reads-trimmed"
+  reads_length: "150"
   glob: "*R{1,2}*.fastq.gz"
   glob_unzipped: "*R{1,2}*.fastq"
+  genomes: "genomes"
+  fungi: "ptr-m4"
+  plant: "wheat"
   adapters: "adapters.fasta"
   time: "time"
   fastp: "fastp"
   fastqc: "fastqc"
+  star: "star"
 
 files:
   conf: "conf"
