@@ -1,10 +1,158 @@
 # Configuration of Nextflow processes
 [process]
-module = ["openjdk/17.0.0_35.lua"]
+module = ["openjdk/17.0.0_35.lua", "singularity/3.8.6-mpi.lua"]
 executor = "slurm"
 clusterOptions = "--qos high"
 
-# Location of binaries
-[binaries.fastqc]
-container = "${projectDir}/containers/container"
+# Other pipeline configurations
+[time]
+bin = "/usr/bin/time"
+flags = "-v"
+
+[parallel]
+bin = "parallel"
+flags = ""
+
+
+# Container engine parameters
+[container]
+# Container engine binary
+# Default: ./
+bin = "singularity"
+
+# Container engine options
+# Default:
+opts = ""
+
+# Container runtime command
+# Default: exec
+exec = "exec"
+
+# Options to append to the runtime command
+# Default:
+exec_opts = ""
+
+# Enable the usage of a single container for the pipeline, see entry below to
+# set path to the container.
+# Default: true
+monolithic = true
+
+# Path to a container containing all binaries and tools used for the pipeline,
+# only functional if monolithic is set to true, otherwise containers are loaded
+# per-module.
+# Default: NA
+path = "${projectDir}/containers/comboseq"
+
+
+# Module settings
+[tools]
+bc = "bc"
+wc = "wc"
+
+
+[extract]
+# Resources
+process = "local"
+cores = 8
+memory = 8
+
+# Container options, corrects mismatched reads on alignment
+container = false
+
+# Command
+bin = "pigz"
+flags = ""
+
+
+[samtools]
+# Resources
+cores = 4
+memory = 8
+
+# Container options
+container = true
+direct = false
+path = ""
+
+# Command
+bin = "fastp"
+flags = ""
+
+
+[fastp]
+# Resources
+# Buffer is used for combining combining samples when using a batch allocator,
+# currently not implemented
+cores = 4
+memory = -1
+buffer = 4
+
+# Container options
+container = false
+direct = false
+path = "${projectDir}/containers/comboseq.sif"
+
+# Command
+bin = "fastp"
+flags = ""
+
+
+[star]
+# Resources
+# Memory allocation should be set to -1 to use the STAR module's automatic
+# memory assignment
+cores = 16
+memory = 48
+
+# Container options
+container = true
+path = "${projectDir}/containers/comboseq.sif"
+
+# Command
+bin = "STAR"
+flags = ""
+
+
+[fastqc]
+# Resources
+cores = 1
+memory = -1
+
+# Container options
+container = false
+direct = false
+path = "${projectDir/containers/comboseq.sif}"
+
+# Command
 bin = "fastqc"
+flags = ""
+
+
+[multiqc]
+# Resources
+cores = 1
+memory = 1
+
+# Container options
+container = true
+direct = false
+path = "${projectDir/containers/comboseq.sif}"
+
+# Command
+bin = "multiqc"
+flags = ""
+
+
+[seqkit]
+# Resources
+cores = 1
+memory = 1
+
+# Container options
+container = true
+direct = false
+path = "${projectDir/containers/comboseq.sif}"
+
+# Command
+bin = "seqkit"
+flags = ""
