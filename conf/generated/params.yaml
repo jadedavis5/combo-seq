@@ -55,8 +55,8 @@ fastp:
   compress_level: "5"
 
 star:
-  cores: "8"
-  memory: "16"
+  cores: "16"
+  memory: "48"
   container: "True"
   path: "${projectDir}/containers/comboseq.sif"
   bin: "STAR"
@@ -80,12 +80,21 @@ multiqc:
   bin: "multiqc"
   flags: ""
 
+seqkit:
+  cores: "1"
+  memory: "1"
+  container: "True"
+  direct: "False"
+  path: "${projectDir/containers/comboseq.sif}"
+  bin: "seqkit"
+  flags: ""
+
 data:
   path: "${projectDir}/data"
   out: "${projectDir}/data"
   reports: "${projectDir}/reports"
   logs: "${projectDir}/logs"
-  reads: "reads"
+  reads: "reads-small"
   reads_unzipped: "reads-unzipped"
   reads_trimmed: "reads-trimmed"
   reads_length: "150"
@@ -93,7 +102,7 @@ data:
   glob_unzipped: "*R{1,2}*.fastq"
   genomes: "genomes"
   fungi: "ptr-m4"
-  plant: "wheat"
+  plant: "wheat-cs"
   adapters: "adapters.fasta"
   time: "time"
   fastp: "fastp"

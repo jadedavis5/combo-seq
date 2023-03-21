@@ -1,5 +1,5 @@
 // Module information
-name = "trinity"
+name = "seqkit"
 module = params[name]
 
 
@@ -41,39 +41,44 @@ else {
 
 
 // Module settings
+logfile = ""
 
 
-process module {
-    tag "${name}-${id}"
+process length {
+    tag "${name}-${seq}"
     cpus module.cores
     memory module.memory
-    time module.time
-    queue module.queue
+    executor "local"
+    // time module.time
+    // queue module.queue
 
-    publishDir "${params.data.out}/${params.data.time}",
-        mode: "copy",
-        overwrite: true,
-        pattern: "time-${id}-${name}.txt"
+    // publishDir "${params.data.out}/${params.data.time}",
+    //     mode: "copy",
+    //     overwrite: true,
+    //     pattern: "time-${id}-${name}.txt"
+    // publishDir "${params.data.logs}/${params.data.star}",
+    //     mode: "copy",
+    //     overwrite: true,
+    //     pattern: "${logfile}",
+    // publishDir "${params.data.logs}/${params.data.star}",
+    //     mode: "copy",
+    //     overwrite: true,
+    //     pattern: "${logfile}",
+    //     saveAs: {"${name}-index-${id}-${it}"}
+    //     saveAs: {"${name}-index-${id}-${it}"}
 
     input:
-    tuple val(id)
+    tuple path(seq)
 
     output:
-    tuple val(id)
-    path("time-${id}-${name}.txt"), emit: "tfile", optional: true
+    env(seq_length), emit: "seq_length"
 
     shell:
     '''
-    flags="!{module.flags}"
-    tfile="time-!{id}-!{name}.txt"
-    !{params.time.bin} !{params.time.flags} -o "${tfile}" \
-        !{bin} "${flags}"
-
-    # Process information
-    echo "	Allocated resources" >> "${tfile}"
-    echo "	CPUs: !{task.cpus}" >> "${tfile}"
-    echo "	Memory: !{task.memory}" >> "${tfile}"
-    echo "	Time: !{task.time}" >> "${tfile}"
-    echo "	Queue: !{task.queue}" >> "${tfile}"
+    seq_length=$( !{module.bin} stats -T \
+        "!{seq}" \
+        -j !{task.cpus} |
+        cut -d $'\n' -f '2' |
+        cut -d $'\t' -f '5' )
     '''
 }

@@ -10,8 +10,8 @@ reports = "${projectDir}/reports"
 logs = "${projectDir}/logs"
 
 # Reads
-reads = "reads" # Path in data folder
-# reads = "reads-small" # Used for pipeline testing
+# reads = "reads" # Path in data folder
+reads = "reads-small" # Used for pipeline testing
 # reads = "reads-limited"
 reads_unzipped = "reads-unzipped"
 reads_trimmed = "reads-trimmed"
@@ -24,7 +24,7 @@ glob_unzipped = "*R{1,2}*.fastq"
 # Expects files with the base name "genome" (i.e. genome.fasta, genome.gtf)
 genomes = "genomes" # Path in data folder
 fungi = "ptr-m4"
-plant = "wheat"
+plant = "wheat-cs"
 
 # Adapters
 adapters = "adapters.fasta"

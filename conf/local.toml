@@ -104,8 +104,10 @@ flags = ""
 
 [star]
 # Resources
-cores = 8
-memory = 16
+# Memory allocation should be set to -1 to use the STAR module's automatic
+# memory assignment
+cores = 16
+memory = 48
 
 # Container options
 container = true
@@ -143,4 +145,19 @@ path = "${projectDir/containers/comboseq.sif}"
 
 # Command
 bin = "multiqc"
+flags = ""
+
+
+[seqkit]
+# Resources
+cores = 1
+memory = 1
+
+# Container options
+container = true
+direct = false
+path = "${projectDir/containers/comboseq.sif}"
+
+# Command
+bin = "seqkit"
 flags = ""
