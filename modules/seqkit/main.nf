@@ -68,17 +68,15 @@ process length {
     //     saveAs: {"${name}-index-${id}-${it}"}
 
     input:
-    tuple path(seq)
+    path(seq)
 
     output:
     env(seq_length), emit: "seq_length"
 
     shell:
     '''
-    seq_length=$( !{module.bin} stats -T \
-        "!{seq}" \
-        -j !{task.cpus} |
-        cut -d $'\n' -f '2' |
-        cut -d $'\t' -f '5' )
+    seq_length=$(!{bin} stats -T "!{seq}" -j !{task.cpus} |
+        cut -d $'\n' -f 2 |
+        cut -d $'\t' -f 5 )
     '''
 }

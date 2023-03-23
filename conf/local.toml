@@ -106,7 +106,7 @@ flags = ""
 # Resources
 # Memory allocation should be set to -1 to use the STAR module's automatic
 # memory assignment
-cores = 16
+cores = 32
 memory = 48
 
 # Container options

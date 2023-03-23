@@ -58,4 +58,4 @@ resume = true
 #
 # Also check conf/common.toml for data/workflow specific configurations
 [profile]
-active = "local"
+active = "setonix"

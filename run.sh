@@ -9,7 +9,7 @@
 #
 # Wrapper script written in Bash that runs Nextflow with default parameters,
 # including loading profile-specific configs and parameters
-# 
+#
 
 SCRIPT="workflow.nf"
 NF_OPTS=""
@@ -24,7 +24,6 @@ AUTOGEN="True"
 CONF_GEN="bin/generate_configs.py"
 CONF_GET="bin/toml_parser.py"
 
-
 # *** DO NOT EDIT BELOW THIS LINE ***
 
 # Functions
@@ -33,11 +32,13 @@ function settings_get() {
 }
 
 function test_python() {
-	"$PY" --version &> /dev/null || echo "$NO_PYTHON"; return 1
+	"$PY" --version &>/dev/null || echo "$NO_PYTHON"
+	return 1
 }
 
 function test_toml() {
-	"$PY" -c "import toml" &> /dev/null || echo "$NO_TOML"; return 1
+	"$PY" -c "import toml" &>/dev/null || echo "$NO_TOML"
+	return 1
 }
 
 function load_venv() {
@@ -54,7 +55,6 @@ function autogen() {
 	CONFIG=$(settings_get "$_CONFIG")
 	PARAMS=$(settings_get "$_PARAMS")
 
-
 	# Set Nextflow settings
 	if [[ $(settings_get "$_CLEAN_LOGS") == "$_BOOL_TRUE" ]]; then
 		rm -rf .nextflow.log*
@@ -62,7 +62,6 @@ function autogen() {
 	if [[ $(settings_get "$_RESUME") == "$_BOOL_TRUE" ]]; then
 		NF_OPTS+=" -resume"
 	fi
-
 
 	# Profile generation
 	# Set active profile
@@ -73,7 +72,6 @@ function autogen() {
 	mkdir -p "$(dirname "$PARAMS")"
 	"$PY" "$CONF_GEN" "$CONF_DIR/$PROFILE.toml"
 }
-
 
 # Settings
 # Run script paramters
@@ -114,9 +112,10 @@ Python 3 appears to be unable to load the module 'toml'
 $NO_GEN"""
 
 # Binaries
-NF="$(settings_get $_NF)"
+# NF="$(settings_get "$_NF")"
 # PY="$(settings_get $_PY)"
 
+NF="bin/nextflow"
 
 # Load Python 3 virtual environment, else use host Python 3
 if [[ -n "$PYENV" ]]; then load_venv; fi
@@ -127,8 +126,7 @@ if [[ $(test_python) -gt 0 ]]; then AUTOGEN="$_BOOL_FALSE"; fi
 if [[ $(test_toml) -gt 0 ]]; then AUTOGEN="$_BOOL_FALSE"; fi
 
 # Ensure that AUTOGEN was set correctly, using the longest case conversion, ever
-if [[ "$(echo $AUTOGEN | tr '[:upper:]' '[:lower:]')" \
-	  == "$(echo $_BOOL_TRUE | tr '[:upper:]' '[:lower:]')" ]]; then
+if [[ "$(echo $AUTOGEN | tr '[:upper:]' '[:lower:]')" == "$(echo $_BOOL_TRUE | tr '[:upper:]' '[:lower:]')" ]]; then
 	AUTOGEN="$_BOOL_TRUE"
 fi
 if [[ "$AUTOGEN" == "$_BOOL_TRUE" ]]; then
@@ -139,7 +137,6 @@ else
 	CONFIG="conf/generated/nextflow.conf"
 	PARAMS="conf/generated/params.yaml"
 fi
-
 
 # Execute pipeline
 echo """

@@ -41,7 +41,7 @@ monolithic = true
 # only functional if monolithic is set to true, otherwise containers are loaded
 # per-module.
 # Default: NA
-path = "${projectDir}/containers/comboseq"
+path = "${projectDir}/containers/comboseq.sif"
 
 
 # Module settings
@@ -101,8 +101,23 @@ flags = ""
 # Resources
 # Memory allocation should be set to -1 to use the STAR module's automatic
 # memory assignment
-cores = 16
-memory = 48
+cores = 32
+
+# TODO: Determine aligner peak memory usage
+memory_align = 200
+
+# Peaked at ~160 GB for a wheat genome
+# Allocated +20% of peak memory usage
+# ~1000 GB of memory available on highmem queues
+memory_index = 200
+
+queue_align = "highmem"
+queue_index = "highmem"
+
+# TODO: Determine aligner time
+time_align = 2
+# Took 1.5 h to build the Chinese Spring reference, using 64 cores and 200 GB of RAM
+time_index = 2
 
 # Container options
 container = true

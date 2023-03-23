@@ -1,5 +1,7 @@
 process:
-  executor: "local"
+  module: "['openjdk/17.0.0_35.lua', 'singularity/3.8.6-mpi.lua']"
+  executor: "slurm"
+  clusterOptions: "--qos high"
 
 time:
   bin: "/usr/bin/time"
@@ -10,12 +12,12 @@ parallel:
   flags: ""
 
 container:
-  bin: "apptainer"
+  bin: "singularity"
   opts: ""
   exec: "exec"
   exec_opts: ""
   monolithic: "True"
-  path: "${projectDir}/containers/comboseq"
+  path: "${projectDir}/containers/comboseq.sif"
 
 tools:
   bc: "bc"
@@ -55,8 +57,13 @@ fastp:
   compress_level: "5"
 
 star:
-  cores: "16"
-  memory: "48"
+  cores: "32"
+  memory_align: "200"
+  memory_index: "200"
+  queue_align: "highmem"
+  queue_index: "highmem"
+  time_align: "2"
+  time_index: "2"
   container: "True"
   path: "${projectDir}/containers/comboseq.sif"
   bin: "STAR"
@@ -94,7 +101,7 @@ data:
   out: "${projectDir}/data"
   reports: "${projectDir}/reports"
   logs: "${projectDir}/logs"
-  reads: "reads-small"
+  reads: "reads"
   reads_unzipped: "reads-unzipped"
   reads_trimmed: "reads-trimmed"
   reads_length: "150"
@@ -126,5 +133,5 @@ nextflow:
   resume: "True"
 
 profile:
-  active: "local"
+  active: "setonix"
 

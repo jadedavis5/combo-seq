@@ -11,15 +11,15 @@ process module {
     // queue module.queue
 
     input:
-    tuple val(query), val(id), path(reads)
+    tuple val(query), val(id)
 
     output:
-    tuple val(id), path("trim-${id}*"), emit: "reads"
+    tuple val(id), path("${id}*")
 
     shell:
     '''
     find "!{params.data.path}/!{query}" \
-        -iname "*trim-!{id}*" \
+        -iname "*!{id}*" \
         -exec bash -c "ln -sr {} ." ';'
     '''
 }
