@@ -41,6 +41,7 @@ else {
 
 
 // Module settings
+logfile = ""
 
 
 process module {
@@ -54,13 +55,24 @@ process module {
         mode: "copy",
         overwrite: true,
         pattern: "time-${id}-${name}.txt"
+    publishDir "${params.data.logs}/${params.data.star}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "${logfile}"
+    publishDir "${params.data.logs}/${params.data.star}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "${logfile}",
+        saveAs: {"${name}-index-${id}-${it}"}
 
     input:
     tuple val(id)
 
     output:
-    tuple val(id)
+    stdout
+    tuple val(id), emit: "${name}"
     path("time-${id}-${name}.txt"), emit: "tfile", optional: true
+    path("${logfile}"), emit: "logs", optional: true
 
     shell:
     '''

@@ -1,7 +1,5 @@
 process:
-  module: "['openjdk/17.0.0_35.lua', 'singularity/3.8.6-mpi.lua']"
-  executor: "slurm"
-  clusterOptions: "--qos high"
+  executor: "local"
 
 time:
   bin: "/usr/bin/time"
@@ -12,12 +10,12 @@ parallel:
   flags: ""
 
 container:
-  bin: "singularity"
+  bin: "apptainer"
   opts: ""
   exec: "exec"
   exec_opts: ""
-  monolithic: "True"
-  path: "${projectDir}/containers/comboseq.sif"
+  monolithic: "False"
+  path: "${projectDir}/containers/comboseq"
 
 tools:
   bc: "bc"
@@ -58,15 +56,18 @@ fastp:
 
 star:
   cores: "32"
-  memory_align: "200"
-  memory_index: "200"
-  queue_align: "highmem"
-  queue_index: "highmem"
-  time_align: "2"
-  time_index: "2"
+  memory: "48"
   container: "True"
   path: "${projectDir}/containers/comboseq.sif"
   bin: "STAR"
+  flags: ""
+
+trinity:
+  cores: "16"
+  memory: "48"
+  container: "True"
+  path: "${projectDir}/containers/trinity.sif"
+  bin: "Trinity"
   flags: ""
 
 fastqc:

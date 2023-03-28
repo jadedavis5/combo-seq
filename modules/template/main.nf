@@ -58,12 +58,11 @@ process module {
     publishDir "${params.data.logs}/${params.data.star}",
         mode: "copy",
         overwrite: true,
-        pattern: "${logfile}",
+        pattern: "${logfile}"
     publishDir "${params.data.logs}/${params.data.star}",
         mode: "copy",
         overwrite: true,
         pattern: "${logfile}",
-        saveAs: {"${name}-index-${id}-${it}"}
         saveAs: {"${name}-index-${id}-${it}"}
 
     input:

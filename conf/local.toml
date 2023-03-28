@@ -40,7 +40,7 @@ exec_opts = ""
 # Enable the usage of a single container for the pipeline, see entry below to
 # set path to the container.
 # Default: true
-monolithic = true
+monolithic = false
 
 # Path to a container containing all binaries and tools used for the pipeline,
 # only functional if monolithic is set to true, otherwise containers are loaded
@@ -115,6 +115,20 @@ path = "${projectDir}/containers/comboseq.sif"
 
 # Command
 bin = "STAR"
+flags = ""
+
+
+[trinity]
+# Resources
+cores = 16
+memory = 48
+
+# Container options
+container = true
+path = "${projectDir}/containers/trinity.sif"
+
+# Command
+bin = "Trinity"
 flags = ""
 
 
