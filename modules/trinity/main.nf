@@ -66,7 +66,7 @@ process module {
         saveAs: {"${name}-index-${id}-${it}"}
 
     input:
-    tuple val(id)
+    tuple val(id), path(reads)
 
     output:
     stdout
@@ -76,10 +76,14 @@ process module {
 
     shell:
     '''
-    flags="!{module.flags}"
+    # flags="!{module.flags}"
+    flags=""
     tfile="time-!{id}-!{name}.txt"
     !{params.time.bin} !{params.time.flags} -o "${tfile}" \
-        !{bin} "${flags}"
+        !{bin} \
+        --seqType fq --left "!{reads[0]}" --right "!{reads[1]}" \
+        --CPU !{module.cores} \
+        --max_memory !{module.memory}
 
     # Process information
     echo "	Allocated resources" >> "${tfile}"

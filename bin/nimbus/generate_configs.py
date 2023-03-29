@@ -30,7 +30,7 @@ def nf_conf_str(x, conf):
 
 
 # Load vars from workflow config
-settings = load_toml("conf/settings.toml")
+settings = load_toml("conf/nimbus.toml")
 params = settings["files"]["params"]
 nf_conf = settings["files"]["config"]
 
