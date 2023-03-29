@@ -111,6 +111,8 @@ data:
   genomes: "genomes"
   fungi: "ptr-m4"
   plant: "wheat-cs"
+  fungi_intron_max: "6000"
+  plant_intron_max: "30000"
   adapters: "adapters.fasta"
   time: "time"
   fastp: "fastp"

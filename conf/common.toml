@@ -26,6 +26,13 @@ genomes = "genomes" # Path in data folder
 fungi = "ptr-m4"
 plant = "wheat-cs"
 
+# Genome information: fungi
+fungi_intron_max = 6000
+
+# Genome information: plant
+# Longest intron length, based on GTF annotations
+plant_intron_max = 30000
+
 # Adapters
 adapters = "adapters.fasta"
 

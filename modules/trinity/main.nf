@@ -66,7 +66,7 @@ process module {
         saveAs: {"${name}-index-${id}-${it}"}
 
     input:
-    tuple val(id), path(reads)
+    tuple val(id), path(reads), path(bam), val(intron_max)
 
     output:
     stdout
@@ -82,8 +82,13 @@ process module {
     !{params.time.bin} !{params.time.flags} -o "${tfile}" \
         !{bin} \
         --seqType fq --left "!{reads[0]}" --right "!{reads[1]}" \
+        --genome_guided_bam "!{bam}" \
+        --genome_guided_max_introns !{intron_max} \
         --CPU !{module.cores} \
         --max_memory !{module.memory}
+
+    # Remove temporary work folder
+    rm -rf trinity_out_dir
 
     # Process information
     echo "	Allocated resources" >> "${tfile}"

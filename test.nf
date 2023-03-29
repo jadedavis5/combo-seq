@@ -114,8 +114,8 @@ workflow PLANT {
     //         .combine(gtf))
     // index = STAR_INDEX.out.index
 
-    // LOADER
-    // Returns the STAR genome index
+    // // STAR
+    // // Returns the STAR genome index
     // query = Channel.value("${params.data.star}/")
     // LOADER(query.combine(id))
     // index = LOADER.out
@@ -127,8 +127,16 @@ workflow PLANT {
     //         .combine(gtf)
     //         .combine(index))
 
-    TRINITY(reads)
-    TRINITY.out[0].view()
+    // Trinity
+    // Returns BAMS from STAR
+    query = Channel.value("${params.data.star}/")
+    LOADER(query.combine(reads.flatMap {n -> "${n[0]}/Aligned.sortedByCoord.out.bam"}))
+    bam = LOADER.out
+    bam.view()
+    intron_max = Channel.value("${params.data.plant_intron_max}")
+
+    // TRINITY(reads, bam, intron_max)
+    // TRINITY.out[0].view()
 
     // emit:
     // star = STAR.out.star
