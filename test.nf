@@ -104,8 +104,8 @@ workflow PLANT {
     gtf = Channel.fromPath("${genomes}/${params.data.plant}/genome.gtf")
     reads = reads
 
-    // SEQ_LENGTH(genome)
-    // genome_length = SEQ_LENGTH.out.seq_length
+    SEQ_LENGTH(genome)
+    genome_length = SEQ_LENGTH.out.seq_length
 
     // STAR_INDEX(
     //     id
@@ -114,29 +114,18 @@ workflow PLANT {
     //         .combine(gtf))
     // index = STAR_INDEX.out.index
 
-    // // STAR
-    // // Returns the STAR genome index
-    // query = Channel.value("${params.data.star}/")
-    // LOADER(query.combine(id))
-    // index = LOADER.out
-
-    // // STAR accepts: reads, genome_length, gtf, indexer output
-    // STAR(
-    //     reads
-    //         .combine(genome_length)
-    //         .combine(gtf)
-    //         .combine(index))
-
-    // Trinity
-    // Returns BAMS from STAR
+    // LOADER
+    // Returns the STAR genome index
     query = Channel.value("${params.data.star}/")
-    LOADER(query.combine(reads.flatMap {n -> "${n[0]}/Aligned.sortedByCoord.out.bam"}))
-    bam = LOADER.out
-    bam.view()
-    intron_max = Channel.value("${params.data.plant_intron_max}")
+    LOADER(query.combine(id))
+    index = LOADER.out
 
-    // TRINITY(reads, bam, intron_max)
-    // TRINITY.out[0].view()
+    // STAR accepts: reads, genome_length, gtf, indexer output
+    STAR(
+        reads
+            .combine(genome_length)
+            .combine(gtf)
+            .combine(index))
 
     // emit:
     // star = STAR.out.star

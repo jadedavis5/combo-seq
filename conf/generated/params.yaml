@@ -1,0 +1,147 @@
+process:
+  module: "['openjdk/17.0.0_35.lua', 'singularity/3.8.6-mpi.lua']"
+  executor: "slurm"
+  clusterOptions: "--qos high"
+
+time:
+  bin: "/usr/bin/time"
+  flags: "-v"
+
+parallel:
+  bin: "parallel"
+  flags: ""
+
+container:
+  bin: "singularity"
+  opts: ""
+  exec: "exec"
+  exec_opts: ""
+  monolithic: "True"
+  path: "${projectDir}/containers/comboseq.sif"
+
+tools:
+  bc: "bc"
+  wc: "wc"
+
+extract:
+  process: "local"
+  cores: "8"
+  memory: "8"
+  container: "False"
+  bin: "pigz"
+  flags: ""
+
+samtools:
+  cores: "4"
+  memory: "8"
+  container: "True"
+  direct: "False"
+  path: ""
+  bin: "fastp"
+  flags: ""
+
+fastp:
+  cores: "4"
+  memory: "-1"
+  buffer: "4"
+  container: "False"
+  direct: "False"
+  path: "${projectDir}/containers/comboseq.sif"
+  bin: "fastp"
+  flags: ""
+  quality: "20"
+  trimf: "10"
+  trimt: "0"
+  autodetect: "False"
+  compress: "True"
+  compress_level: "5"
+
+star:
+  cores: "32"
+  memory_align: "200"
+  memory_index: "200"
+  queue_align: "highmem"
+  queue_index: "highmem"
+  time_align: "2"
+  time_index: "2"
+  container: "True"
+  path: "${projectDir}/containers/comboseq.sif"
+  bin: "STAR"
+  flags: ""
+
+trinity:
+  cores: "32"
+  memory: "50"
+  container: "True"
+  path: "${projectDir}/containers/trinity.sif"
+  bin: "Trinity"
+  flags: ""
+
+fastqc:
+  cores: "1"
+  memory: "-1"
+  container: "False"
+  direct: "False"
+  path: "${projectDir/containers/comboseq.sif}"
+  bin: "fastqc"
+  flags: ""
+
+multiqc:
+  cores: "1"
+  memory: "1"
+  container: "True"
+  direct: "False"
+  path: "${projectDir/containers/comboseq.sif}"
+  bin: "multiqc"
+  flags: ""
+
+seqkit:
+  cores: "1"
+  memory: "1"
+  container: "True"
+  direct: "False"
+  path: "${projectDir/containers/comboseq.sif}"
+  bin: "seqkit"
+  flags: ""
+
+data:
+  path: "${projectDir}/data"
+  out: "${projectDir}/data"
+  reports: "${projectDir}/reports"
+  logs: "${projectDir}/logs"
+  reads: "reads"
+  reads_unzipped: "reads-unzipped"
+  reads_trimmed: "reads-trimmed"
+  reads_length: "150"
+  glob: "*R{1,2}*.fastq.gz"
+  glob_unzipped: "*R{1,2}*.fastq"
+  genomes: "genomes"
+  fungi: "ptr-m4"
+  plant: "wheat-cs"
+  fungi_intron_max: "6000"
+  plant_intron_max: "30000"
+  adapters: "adapters.fasta"
+  time: "time"
+  fastp: "fastp"
+  fastqc: "fastqc"
+  star: "star"
+
+files:
+  conf: "conf"
+  nf: "bin/nextflow"
+  py3: "python3"
+  config: "conf/generated/nextflow.conf"
+  params: "conf/generated/params.yaml"
+  common: "conf/common.toml"
+
+workflow:
+  skip_extract: "True"
+  compress: "True"
+
+nextflow:
+  clean_logs: "True"
+  resume: "True"
+
+profile:
+  active: "setonix"
+

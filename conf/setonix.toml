@@ -128,6 +128,20 @@ bin = "STAR"
 flags = ""
 
 
+[trinity]
+# Resources
+cores = 32
+memory = 50
+
+# Container options
+container = true
+path = "${projectDir}/containers/trinity.sif"
+
+# Command
+bin = "Trinity"
+flags = ""
+
+
 [fastqc]
 # Resources
 cores = 1

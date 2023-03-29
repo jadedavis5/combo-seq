@@ -31,12 +31,13 @@ log.info """
 
 
 // Load modules
+include {loader1 as LOADER1; loader2 as LOADER2} from "./modules/loader/main.nf"
 include {module as INSPECTOR} from "./modules/inspector/main.nf"
-include {module as LOADER} from "./modules/loader/main.nf"
 include {module as EXTRACT} from "./modules/extract/main.nf"
 include {module as FASTP} from "./modules/fastp/main.nf"
 include {module as FASTQC} from "./modules/fastqc/main.nf"
 include {module as MULTIQC} from "./modules/multiqc/main.nf"
+include {module as TRINITY} from "./modules/trinity/main.nf"
 include {length as SEQ_LENGTH} from "./modules/seqkit/main.nf"
 include {align as STAR; index as STAR_INDEX} from "./modules/star/main.nf"
 
@@ -81,11 +82,12 @@ workflow MAIN {
     // LOADER
     // Used for when Nextflow doesn't resume efficiently
     // Make sure directories terminate with a trailing slash "/"
-    query = Channel.value("reads-trimmed/")
-    LOADER(
-        query.combine(EXTRACT.flatMap {n -> n[0]})) // Reads to trimmed reads
+    path = Channel.value("reads-trimmed/")
+    LOADER1(
+        EXTRACT.flatMap {n -> n[0]}
+            .combine(path)) // Reads to trimmed reads
 
-    reads_out = LOADER.out
+    reads_out = LOADER1.out
     // reads_out = FASTP.out.reads
 
     emit:
@@ -102,8 +104,8 @@ workflow PLANT {
     gtf = Channel.fromPath("${genomes}/${params.data.plant}/genome.gtf")
     reads = reads
 
-    SEQ_LENGTH(genome)
-    genome_length = SEQ_LENGTH.out.seq_length
+    // SEQ_LENGTH(genome)
+    // genome_length = SEQ_LENGTH.out.seq_length
 
     // STAR_INDEX(
     //     id
@@ -112,52 +114,38 @@ workflow PLANT {
     //         .combine(gtf))
     // index = STAR_INDEX.out.index
 
-    // LOADER
-    // Returns the STAR genome index
-    query = Channel.value("${params.data.star}/")
-    LOADER(query.combine(id))
-    index = LOADER.out
+    // // STAR
+    // // Returns the STAR genome index
+    // path = Channel.value("${params.data.star}")
+    // LOADER(id.combine(path).combine(id))
+    // index = LOADER.out
 
-    // STAR accepts: reads, genome_length, gtf, indexer output
-    STAR(
-        reads
-            .combine(genome_length)
-            .combine(gtf)
-            .combine(index))
+    // // STAR accepts: reads, genome_length, gtf, indexer output
+    // STAR(
+    //     reads
+    //         .combine(genome_length)
+    //         .combine(gtf)
+    //         .combine(index))
+
+    // Trinity
+    // Returns BAMS from STAR
+    path = Channel.value("${params.data.star}/")
+    LOADER2(reads.flatMap {n -> "${n[0]}-${params.data.plant}"}
+       .combine(path)
+       .combine(Channel.value("Aligned.sortedByCoord.out.bam")))
+    bam = LOADER2.out
+    intron_max = Channel.value("${params.data.plant_intron_max}")
+
+    TRINITY(reads.flatMap {n -> [["${n[0]}-${params.data.plant}", n[1]]]}
+            .join(bam)
+            .combine(intron_max))
+    // TRINITY.out[0].view()
 
     // emit:
     // star = STAR.out.star
 }
 
 workflow FUNGI {
-    take:
-    reads
-
-    main:
-    id = Channel.of("${params.data.fungi}")
-    genome = Channel.fromPath("${genomes}/${params.data.fungi}/genome.fasta")
-    gtf = Channel.fromPath("${genomes}/${params.data.fungi}/genome.gtf")
-    reads = reads
-
-    // STAR indexer also returns genome length, under the output genome_length
-    SEQ_LENGTH(genome)
-    // STAR_INDEX(
-    //     id
-    //         .combine(genome)
-    //         .combine(SEQ_LENGTH.out.seq_length)
-    //         .combine(gtf))
-    // STAR_INDEX = LOADER("wheat-cs")
-
-    // STAR accepts: reads, genome_length, gtf, indexer output
-    // Does not need the genome, only used for index generation
-    STAR(
-        reads
-            .combine(SEQ_LENGTH.out.seq_length)
-            .combine(gtf)
-            .combine(STAR_INDEX.out.index))
-
-    emit:
-    star = STAR.out.star
 }
 
 workflow {
