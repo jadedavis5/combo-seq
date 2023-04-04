@@ -51,26 +51,31 @@ process module {
     time module.time
     queue module.queue
 
+    publishDir "${params.data.out}/${params.data.trinity}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "trinity_out_dir.Trinity.fasta",
+        saveAs: {"${id}.fasta"}
+    publishDir "${params.data.out}/${params.data.trinity}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "trinity_out_dir.Trinity.fasta.gene_trans_map",
+        saveAs: {"${id}.gene_trans_map"}
     publishDir "${params.data.out}/${params.data.time}",
         mode: "copy",
         overwrite: true,
         pattern: "time-${id}-${name}.txt"
-    publishDir "${params.data.logs}/${params.data.star}",
+    publishDir "${params.data.logs}/${name}",
         mode: "copy",
         overwrite: true,
         pattern: "${logfile}"
-    publishDir "${params.data.logs}/${params.data.star}",
-        mode: "copy",
-        overwrite: true,
-        pattern: "${logfile}",
-        saveAs: {"${name}-index-${id}-${it}"}
 
     input:
     tuple val(id), path(reads), path(bam), val(intron_max)
 
     output:
     stdout
-    tuple val(id), emit: "${name}"
+    tuple val(id), path("trinity_out_dir.Trinity.fasta{,.gene_trans_map}"), emit: "${name}"
     path("time-${id}-${name}.txt"), emit: "tfile", optional: true
     path("${logfile}"), emit: "logs", optional: true
 

@@ -9,3 +9,5 @@ work/*
 bin/nextflow
 
 slurm*
+
+conf/generated/*
