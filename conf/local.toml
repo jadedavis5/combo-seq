@@ -108,6 +108,7 @@ flags = ""
 # memory assignment
 cores = 32
 memory = 48
+time = "1.hour"
 
 # Container options
 container = true
@@ -170,7 +171,7 @@ memory = 1
 # Container options
 container = true
 direct = false
-path = "${projectDir/containers/comboseq.sif}"
+path = "${projectDir}/containers/seqkit.sif"
 
 # Command
 bin = "seqkit"

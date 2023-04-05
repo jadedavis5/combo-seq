@@ -80,32 +80,79 @@ workflow MAIN {
     // FASTQC(FASTP.out.reads.combine(adapters))
     // MULTIQC(FASTQC.out.reports.collect())
 
-    // LOADER
-    // Used for when Nextflow doesn't resume efficiently
-    // Make sure directories terminate with a trailing slash "/"
     query = Channel.value("reads-trimmed/")
-    LOADER(
-        query.combine(EXTRACT.flatMap {n -> n[0]})) // Reads to trimmed reads
+    LOADER1(EXTRACT.flatMap {n -> n[0]}.combine(query)) // Reads to trimmed reads
 
-    reads_out = LOADER.out
+    reads_out = LOADER1.out
     // reads_out = FASTP.out.reads
 
     emit:
     reads = reads_out
 }
 
-workflow PLANT {
+// workflow PLANT {
+//     take:
+//     reads
+
+//     main:
+//     id = Channel.of("${params.data.plant}")
+//     genome = Channel.fromPath("${genomes}/${params.data.plant}/genome.fasta")
+//     gtf = Channel.fromPath("${genomes}/${params.data.plant}/genome.gtf")
+//     reads = reads
+
+//     SEQ_LENGTH(genome)
+//     genome_length = SEQ_LENGTH.out.seq_length
+
+//     // STAR_INDEX(
+//     //     id
+//     //         .combine(genome)
+//     //         .combine(SEQ_LENGTH.out.seq_length)
+//     //         .combine(gtf))
+//     // index = STAR_INDEX.out.index
+
+//     // // STAR
+//     // // Returns the STAR genome index
+//     path = Channel.value("${params.data.star}")
+//     LOADER1(id.combine(path).combine(id))
+//     index = LOADER1.out
+
+//     // STAR accepts: reads, genome_length, gtf, indexer output
+//     STAR(
+//         reads
+//             .combine(genome_length)
+//             .combine(gtf)
+//             .combine(index))
+
+//     // Trinity
+//     // Returns BAMS from STAR
+//     // path = Channel.value("${params.data.star}/")
+//     // LOADER2(reads.flatMap {n -> "${n[0]}-${params.data.plant}"}
+//     //    .combine(path)
+//     //    .combine(Channel.value("Aligned.sortedByCoord.out.bam")))
+//     // bam = LOADER2.out
+//     // intron_max = Channel.value("${params.data.plant_intron_max}")
+
+//     // TRINITY(reads.flatMap {n -> [["${n[0]}-${params.data.plant}", n[1]]]}
+//     //         .join(bam)
+//     //         .combine(intron_max))
+//     // TRINITY.out[0].view()
+
+//     // emit:
+//     // star = STAR.out.star
+// }
+
+workflow FUNGI {
     take:
     reads
 
     main:
-    id = Channel.of("${params.data.plant}")
-    genome = Channel.fromPath("${genomes}/${params.data.plant}/genome.fasta")
-    gtf = Channel.fromPath("${genomes}/${params.data.plant}/genome.gtf")
+    id = Channel.of("${params.data.fungi}")
+    genome = Channel.fromPath("${genomes}/${params.data.fungi}/genome.fasta")
+    gtf = Channel.fromPath("${genomes}/${params.data.fungi}/genome.gtf")
     reads = reads
 
-    // SEQ_LENGTH(genome)
-    // genome_length = SEQ_LENGTH.out.seq_length
+    SEQ_LENGTH(genome)
+    genome_length = SEQ_LENGTH.out.seq_length
 
     // STAR_INDEX(
     //     id
@@ -116,40 +163,37 @@ workflow PLANT {
 
     // // STAR
     // // Returns the STAR genome index
-    // path = Channel.value("${params.data.star}")
-    // LOADER(id.combine(path).combine(id))
-    // index = LOADER.out
+    path = Channel.value("${params.data.star}")
+    LOADER1(id.combine(path).combine(id))
+    index = LOADER1.out
 
-    // // STAR accepts: reads, genome_length, gtf, indexer output
-    // STAR(
-    //     reads
-    //         .combine(genome_length)
-    //         .combine(gtf)
-    //         .combine(index))
+    // STAR accepts: reads, genome_length, gtf, indexer output
+    STAR(
+        reads
+            .combine(genome_length)
+            .combine(gtf)
+            .combine(index))
 
     // Trinity
     // Returns BAMS from STAR
-    path = Channel.value("${params.data.star}/")
-    LOADER2(reads.flatMap {n -> "${n[0]}-${params.data.plant}"}
-       .combine(path)
-       .combine(Channel.value("Aligned.sortedByCoord.out.bam")))
-    bam = LOADER2.out
-    intron_max = Channel.value("${params.data.plant_intron_max}")
+    // path = Channel.value("${params.data.star}/")
+    // LOADER2(reads.flatMap {n -> "${n[0]}-${params.data.plant}"}
+    //    .combine(path)
+    //    .combine(Channel.value("Aligned.sortedByCoord.out.bam")))
+    // bam = LOADER2.out
+    // intron_max = Channel.value("${params.data.plant_intron_max}")
 
-    TRINITY(reads.flatMap {n -> [["${n[0]}-${params.data.plant}", n[1]]]}
-            .join(bam)
-            .combine(intron_max))
+    // TRINITY(reads.flatMap {n -> [["${n[0]}-${params.data.plant}", n[1]]]}
+    //         .join(bam)
+    //         .combine(intron_max))
     // TRINITY.out[0].view()
 
     // emit:
     // star = STAR.out.star
 }
 
-workflow FUNGI {
-}
-
 workflow {
     MAIN()
-    // FUNGI(MAIN.out.reads)
-    PLANT(MAIN.out.reads)
+    FUNGI(MAIN.out.reads)
+    // PLANT(MAIN.out.reads)
 }
