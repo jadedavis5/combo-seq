@@ -37,7 +37,7 @@ include {module as EXTRACT} from "./modules/extract/main.nf"
 include {module as FASTP} from "./modules/fastp/main.nf"
 include {module as FASTQC} from "./modules/fastqc/main.nf"
 include {module as MULTIQC} from "./modules/multiqc/main.nf"
-include {module as TRINITY} from "./modules/trinity/main.nf"
+include {assemble1 as TRINITY1; assemble2 as TRINITY2} from "./modules/trinity/main.nf"
 include {length as SEQ_LENGTH} from "./modules/seqkit/main.nf"
 include {align as STAR; index as STAR_INDEX} from "./modules/star/main.nf"
 
@@ -104,8 +104,8 @@ workflow PLANT {
     gtf = Channel.fromPath("${genomes}/${params.data.plant}/genome.gtf")
     reads = reads
 
-    // SEQ_LENGTH(genome)
-    // genome_length = SEQ_LENGTH.out.seq_length
+    SEQ_LENGTH(genome)
+    genome_length = SEQ_LENGTH.out.seq_length
 
     // STAR_INDEX(
     //     id
@@ -116,11 +116,11 @@ workflow PLANT {
 
     // // STAR
     // // Returns the STAR genome index
-    // path = Channel.value("${params.data.star}")
-    // LOADER(id.combine(path).combine(id))
-    // index = LOADER.out
+    path = Channel.value("${params.data.star}")
+    LOADER1(id.combine(path).combine(id))
+    index = LOADER1.out
 
-    // // STAR accepts: reads, genome_length, gtf, indexer output
+    // STAR accepts: reads, genome_length, gtf, indexer output
     // STAR(
     //     reads
     //         .combine(genome_length)
@@ -128,7 +128,6 @@ workflow PLANT {
     //         .combine(index))
 
     // Trinity
-    // Returns BAMS from STAR
     path = Channel.value("${params.data.star}/")
     LOADER2(reads.flatMap {n -> "${n[0]}-${params.data.plant}"}
        .combine(path)
@@ -136,10 +135,11 @@ workflow PLANT {
     bam = LOADER2.out
     intron_max = Channel.value("${params.data.plant_intron_max}")
 
-    TRINITY(reads.flatMap {n -> [["${n[0]}-${params.data.plant}", n[1]]]}
+    // TRINITY2: Guided assembly
+    TRINITY2(reads.flatMap {n -> [["${n[0]}-${params.data.plant}"]]}
             .join(bam)
             .combine(intron_max))
-    // TRINITY.out[0].view()
+    // TRINITY2.out[0].view()
 
     // emit:
     // star = STAR.out.star

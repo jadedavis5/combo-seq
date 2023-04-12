@@ -25,6 +25,10 @@ if (module.container == "True") {
 }
 
 
+// Set CPU
+threads = module.cores.toInteger() * 2
+
+
 // Set memory
 if (module.memory == -1) {
     throw new Exception(
@@ -44,11 +48,11 @@ else {
 logfile = ""
 
 
-process module {
+process assemble1 {
     tag "${name}-${id}"
     cpus module.cores
     memory module.memory
-    time module.time
+    time "${module.time}.hour"
     queue module.queue
 
     publishDir "${params.data.out}/${params.data.trinity}",
@@ -71,7 +75,7 @@ process module {
         pattern: "${logfile}"
 
     input:
-    tuple val(id), path(reads), path(bam), val(intron_max)
+    tuple val(id), path(reads), val(intron_max)
 
     output:
     stdout
@@ -87,9 +91,80 @@ process module {
     !{params.time.bin} !{params.time.flags} -o "${tfile}" \
         !{bin} \
         --seqType fq --left "!{reads[0]}" --right "!{reads[1]}" \
-        --genome_guided_bam "!{bam}" \
-        --genome_guided_max_introns !{intron_max} \
         --CPU !{module.cores} \
+        --max_memory !{module.memory}
+
+    # Remove temporary work folder
+    rm -rf trinity_out_dir
+
+    # Process information
+    echo "	Allocated resources" >> "${tfile}"
+    echo "	CPUs: !{task.cpus}" >> "${tfile}"
+    echo "	Memory: !{task.memory}" >> "${tfile}"
+    echo "	Time: !{task.time}" >> "${tfile}"
+    echo "	Queue: !{task.queue}" >> "${tfile}"
+    '''
+}
+
+process assemble2 {
+    tag "${name}-${id}"
+    cpus module.cores
+    memory module.memory
+    time "${module.time}.hour"
+    queue module.queue
+    clusterOptions "--threads-per-core=2"
+
+    publishDir "${params.data.out}/${params.data.trinity}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "trinity_out_dir.Trinity.fasta",
+        saveAs: {"${id}.fasta"}
+    publishDir "${params.data.out}/${params.data.trinity}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "trinity_out_dir.Trinity.fasta.gene_trans_map",
+        saveAs: {"${id}.gene_trans_map"}
+    publishDir "${params.data.out}/${params.data.time}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "time-${id}-${name}.txt"
+    publishDir "${params.data.logs}/${name}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "${logfile}"
+
+    input:
+    tuple val(id), path(bam), val(intron_max)
+
+    output:
+    stdout
+    tuple val(id), path("trinity_out_dir.Trinity.fasta{,.gene_trans_map}"), emit: "${name}"
+    path("time-${id}-${name}.txt"), emit: "tfile", optional: true
+    path("${logfile}"), emit: "logs", optional: true
+
+    shell:
+    '''
+    # Trinity binaries
+    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity:$PATH"
+    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/Butterfly/bin:$PATH"
+    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/Chrysalis/bin:$PATH"
+    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/Inchworm/bin:$PATH"
+    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/trinity-plugins/BIN:$PATH"
+
+    # Jellyfish binaries
+    # export PATH="/software/projects/fl3/ycoles/manual/software/jellyfish/bin:$PATH"
+
+    # Bowtie2 binaries
+    # export PATH="/software/projects/fl3/ycoles/manual/software/bowtie2:$PATH"
+
+    # flags="!{module.flags}"
+    flags=""
+    tfile="time-!{id}-!{name}.txt"
+    !{params.time.bin} !{params.time.flags} -o "${tfile}" \
+        !{bin} \
+        --genome_guided_bam "!{bam}" \
+        --genome_guided_max_intron !{intron_max} \
+        --CPU !{threads} \
         --max_memory !{module.memory}
 
     # Remove temporary work folder

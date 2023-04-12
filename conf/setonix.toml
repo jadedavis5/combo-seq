@@ -1,7 +1,8 @@
 # Configuration of Nextflow processes
 [process]
-module = ["openjdk/17.0.0_35.lua", "singularity/3.8.6-mpi.lua"]
+module = ["openjdk/17.0.0_35.lua", "singularity/3.8.6-mpi.lua", "samtools/1.15--h3843a85_0", "trinity/2.13.2--ha140323_0.lua"]
 executor = "slurm"
+queueSize = 4
 clusterOptions = "--qos high"
 
 # Other pipeline configurations
@@ -35,7 +36,7 @@ exec_opts = ""
 # Enable the usage of a single container for the pipeline, see entry below to
 # set path to the container.
 # Default: true
-monolithic = true
+monolithic = false
 
 # Path to a container containing all binaries and tools used for the pipeline,
 # only functional if monolithic is set to true, otherwise containers are loaded
@@ -130,11 +131,13 @@ flags = ""
 
 [trinity]
 # Resources
-cores = 32
-memory = 50
+cores = 64
+memory = 100
+time = 24
+queue = "work"
 
 # Container options
-container = true
+container = false
 path = "${projectDir}/containers/trinity.sif"
 
 # Command

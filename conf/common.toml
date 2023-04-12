@@ -10,9 +10,9 @@ reports = "${projectDir}/reports"
 logs = "${projectDir}/logs"
 
 # Reads
-reads = "reads" # Path in data folder
+# reads = "reads" # Path in data folder
 # reads = "reads-small"
-# reads = "reads-limited"
+reads = "reads-limited"
 reads_unzipped = "reads-unzipped"
 reads_trimmed = "reads-trimmed"
 reads_length = "150" # Length of reads
