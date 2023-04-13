@@ -1,9 +1,14 @@
 # Configuration of Nextflow processes
 [process]
-module = ["openjdk/17.0.0_35.lua", "singularity/3.8.6-mpi.lua", "samtools/1.15--h3843a85_0", "trinity/2.13.2--ha140323_0.lua"]
+module = [
+    "openjdk/17.0.0_35.lua",
+    "singularity/3.8.6-mpi.lua",
+    "samtools/1.15--h3843a85_0",
+    "trinity/2.13.2--ha140323_0.lua"
+]
 executor = "slurm"
 queueSize = 4
-clusterOptions = "--qos high"
+# clusterOptions = "--qos high"
 
 # Other pipeline configurations
 [time]
@@ -131,8 +136,8 @@ flags = ""
 
 [trinity]
 # Resources
-cores = 64
-memory = 100
+cores = 64 # ~1/4 of a node
+memory = 60 # ~1/4 of a node
 time = 24
 queue = "work"
 
@@ -145,6 +150,18 @@ bin = "Trinity"
 flags = ""
 
 
+[interpro]
+# Resources
+cores = 32
+memory = 60
+time = 12
+queue = "work"
+
+# Container options
+container = false
+path = "${projectDir}/containers/comboseq.sif"
+
+
 [fastqc]
 # Resources
 cores = 1
@@ -153,7 +170,7 @@ memory = -1
 # Container options
 container = false
 direct = false
-path = "${projectDir/containers/comboseq.sif}"
+path = "${projectDir}/containers/comboseq.sif"
 
 # Command
 bin = "fastqc"
@@ -168,7 +185,7 @@ memory = 1
 # Container options
 container = true
 direct = false
-path = "${projectDir/containers/comboseq.sif}"
+path = "${projectDir}/containers/comboseq.sif"
 
 # Command
 bin = "multiqc"
@@ -183,7 +200,7 @@ memory = 1
 # Container options
 container = true
 direct = false
-path = "${projectDir/containers/comboseq.sif}"
+path = "${projectDir}/containers/comboseq.sif"
 
 # Command
 bin = "seqkit"

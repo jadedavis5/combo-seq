@@ -33,6 +33,9 @@ fungi_intron_max = 6000
 # Longest intron length, based on GTF annotations
 plant_intron_max = 30000
 
+# Proteins
+proteins = "proteins"
+
 # Adapters
 adapters = "adapters.fasta"
 

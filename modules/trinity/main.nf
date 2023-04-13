@@ -25,10 +25,6 @@ if (module.container == "True") {
 }
 
 
-// Set CPU
-threads = module.cores.toInteger() * 2
-
-
 // Set memory
 if (module.memory == -1) {
     throw new Exception(
@@ -112,18 +108,15 @@ process assemble2 {
     memory module.memory
     time "${module.time}.hour"
     queue module.queue
-    clusterOptions "--threads-per-core=2"
 
     publishDir "${params.data.out}/${params.data.trinity}",
         mode: "copy",
         overwrite: true,
-        pattern: "trinity_out_dir.Trinity.fasta",
-        saveAs: {"${id}.fasta"}
+        pattern: "${id}.fasta"
     publishDir "${params.data.out}/${params.data.trinity}",
         mode: "copy",
         overwrite: true,
-        pattern: "trinity_out_dir.Trinity.fasta.gene_trans_map",
-        saveAs: {"${id}.gene_trans_map"}
+        pattern: "${id}.gene_trans_map"
     publishDir "${params.data.out}/${params.data.time}",
         mode: "copy",
         overwrite: true,
@@ -138,25 +131,12 @@ process assemble2 {
 
     output:
     stdout
-    tuple val(id), path("trinity_out_dir.Trinity.fasta{,.gene_trans_map}"), emit: "${name}"
+    tuple val(id), path("${id}.{fasta,gene_trans_map}"), emit: "${name}"
     path("time-${id}-${name}.txt"), emit: "tfile", optional: true
     path("${logfile}"), emit: "logs", optional: true
 
     shell:
     '''
-    # Trinity binaries
-    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity:$PATH"
-    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/Butterfly/bin:$PATH"
-    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/Chrysalis/bin:$PATH"
-    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/Inchworm/bin:$PATH"
-    # export PATH="/software/projects/fl3/ycoles/manual/software/trinity/trinity-plugins/BIN:$PATH"
-
-    # Jellyfish binaries
-    # export PATH="/software/projects/fl3/ycoles/manual/software/jellyfish/bin:$PATH"
-
-    # Bowtie2 binaries
-    # export PATH="/software/projects/fl3/ycoles/manual/software/bowtie2:$PATH"
-
     # flags="!{module.flags}"
     flags=""
     tfile="time-!{id}-!{name}.txt"
@@ -164,8 +144,12 @@ process assemble2 {
         !{bin} \
         --genome_guided_bam "!{bam}" \
         --genome_guided_max_intron !{intron_max} \
-        --CPU !{threads} \
+        --CPU !{task.cpus} \
         --max_memory !{module.memory}
+
+    # Move Trinity outputs
+    mv trinity_out_dir/Trinity-GG.fasta "!{id}.fasta"
+    mv trinity_out_dir/Trinity-GG.fasta.gene_trans_map "!{id}.gene_trans_map"
 
     # Remove temporary work folder
     rm -rf trinity_out_dir
