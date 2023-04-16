@@ -38,7 +38,7 @@ include {module as EXTRACT} from "./modules/extract/main.nf"
 include {module as FASTP} from "./modules/fastp/main.nf"
 include {module as FASTQC} from "./modules/fastqc/main.nf"
 include {module as MULTIQC} from "./modules/multiqc/main.nf"
-include {module as TRINITY} from "./modules/trinity/main.nf"
+include {assemble1 as TRINITY1; assemble2 as TRINITY2} from "./modules/trinity/main.nf"
 include {length as SEQ_LENGTH} from "./modules/seqkit/main.nf"
 include {align as STAR; index as STAR_INDEX} from "./modules/star/main.nf"
 
@@ -157,7 +157,7 @@ workflow FUNGI {
     // STAR_INDEX(
     //     id
     //         .combine(genome)
-    //         .combine(SEQ_LENGTH.out.seq_length)
+    //         .combine(genome_length)
     //         .combine(gtf))
     // index = STAR_INDEX.out.index
 

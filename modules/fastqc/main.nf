@@ -25,6 +25,12 @@ if (module.container == "True") {
 }
 
 
+// Set threads
+if (params.smt == "True") {
+    threads = (module.cpus.toInteger() * 2).toInteger()
+}
+
+
 // Set memory
 if (module.memory == "-1") {
     memory = 1 + Math.floor(module.cores.toInteger() * 0.25)
@@ -37,6 +43,14 @@ if (module.memory == "-1") {
 }
 else {
     module.memory = "${module.memory}G"
+}
+
+
+// Set time
+if (!module.time) {
+    println("Setting non-existent time value to 0")
+    module.time_align = 0
+    module.time_index = 0
 }
 
 
@@ -73,7 +87,7 @@ process module {
     !{params.time.bin} !{params.time.flags} -o "${tfile}" \
         mkdir -p "!{id}"
         !{bin} ${flags} \
-        --threads !{task.cpus} \
+        --threads !{threads} \
         -f fastq \
         "!{reads[0]}" "!{reads[1]}" \
         -a "!{adapters}" \
@@ -82,6 +96,7 @@ process module {
     # Process information
     echo "	Allocated resources" >> "${tfile}"
     echo "	CPUs: !{task.cpus}" >> "${tfile}"
+    echo "	Threads: !{threads}" >> "${tfile}"
     echo "	Memory: !{task.memory}" >> "${tfile}"
     echo "	Time: !{task.time}" >> "${tfile}"
     echo "	Queue: !{task.queue}" >> "${tfile}"

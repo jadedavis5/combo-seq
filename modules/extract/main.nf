@@ -25,9 +25,15 @@ if (module.container == "True") {
 }
 
 
+// Set threads
+if (params.smt == "True") {
+    threads = (module.cpus.toInteger() * 2).toInteger()
+}
+
+
 // Set memory
 if (module.memory == "-1") {
-    memory = 1 + Math.floor(module.cores.toInteger() * 0.25)
+    memory = 1 + Math.floor(threads * 0.25)
     module.memory = "${memory}G"
     binding.variables.remove 'memory'
 } else if (module.memory == "0") {
@@ -37,6 +43,14 @@ if (module.memory == "-1") {
 }
 else {
     module.memory = "${module.memory}G"
+}
+
+
+// Set time
+if (!module.time) {
+    println("Setting non-existent time value to 0")
+    module.time_align = 0
+    module.time_index = 0
 }
 
 
@@ -66,11 +80,12 @@ process module {
     '''
     tfile="time-!{id}-!{name}.txt"
     !{params.time.bin} !{params.time.flags} -o "${tfile}" \
-        !{params.parallel.bin} '!{bin} -p !{task.cpus} -dc {} > {.}' ::: *.gz
+        !{params.parallel.bin} '!{bin} -p !{threads} -dc {} > {.}' ::: *.gz
 
     # Process information
     echo "	Allocated resources" >> "${tfile}"
     echo "	CPUs: !{task.cpus}" >> "${tfile}"
+    echo "	Threads: !{threads}" >> "${tfile}"
     echo "	Memory: !{task.memory}" >> "${tfile}"
     echo "	Time: !{task.time}" >> "${tfile}"
     echo "	Queue: !{task.queue}" >> "${tfile}"

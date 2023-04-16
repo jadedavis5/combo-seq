@@ -40,6 +40,14 @@ else {
 }
 
 
+// Set time
+if (!module.time) {
+    println("Setting non-existent time value to 0")
+    module.time_align = 0
+    module.time_index = 0
+}
+
+
 // Module settings
 // Get read length
 overhang = params.data.reads_length.toInteger() -
@@ -199,13 +207,14 @@ process index {
         --sjdbOverhang "!{overhang}" \
         --sjdbInsertSave All \
         --genomeSAindexNbases ${x} \
-        --runThreadN "!{task.cpus}" \
+        --runThreadN "!{threads}" \
         --runMode genomeGenerate \
         --limitGenomeGenerateRAM ${y}
 
     # Process information
     echo "	Allocated resources" >> "${tfile}"
     echo "	CPUs: !{task.cpus}" >> "${tfile}"
+    echo "	Threads: !{threads}" >> "${tfile}"
     echo "	Memory: !{task.memory}" >> "${tfile}"
     echo "	Time: !{task.time}" >> "${tfile}"
     echo "	Queue: !{task.queue}" >> "${tfile}"

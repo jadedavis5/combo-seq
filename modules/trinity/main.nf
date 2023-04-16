@@ -25,6 +25,12 @@ if (module.container == "True") {
 }
 
 
+// Set threads
+if (params.smt == "True") {
+    threads = (module.cpus.toInteger() * 2).toInteger()
+}
+
+
 // Set memory
 if (module.memory == -1) {
     throw new Exception(
@@ -37,6 +43,14 @@ if (module.memory == -1) {
 }
 else {
     module.memory = "${module.memory}G"
+}
+
+
+// Set time
+if (!module.time) {
+    println("Setting non-existent time value to 0")
+    module.time_align = 0
+    module.time_index = 0
 }
 
 
@@ -157,6 +171,7 @@ process assemble2 {
     # Process information
     echo "	Allocated resources" >> "${tfile}"
     echo "	CPUs: !{task.cpus}" >> "${tfile}"
+    echo "	Threads: !{threads}" >> "${tfile}"
     echo "	Memory: !{task.memory}" >> "${tfile}"
     echo "	Time: !{task.time}" >> "${tfile}"
     echo "	Queue: !{task.queue}" >> "${tfile}"
