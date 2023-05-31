@@ -1,5 +1,5 @@
 // Module information
-name = "interpro"
+name = "tablemaker"
 module = params[name]
 
 
@@ -54,6 +54,10 @@ if (!module.time) {
 }
 
 
+// Set binary
+bin = "${params.data.bin}/${module.bin}"
+
+
 // Module settings
 logfile = ""
 
@@ -65,45 +69,34 @@ process module {
     time "${module.time}.hour"
     queue module.queue
 
+    publishDir "${params.data.out}/${params.data.tablemaker}",
+        mode: "copy",
+        overwrite: true,
+        pattern: "${id}"
     publishDir "${params.data.out}/${params.data.time}",
         mode: "copy",
         overwrite: true,
         pattern: "time-${id}-${name}.txt"
-    publishDir "${params.data.logs}/${params.data.star}",
-        mode: "copy",
-        overwrite: true,
-        pattern: "${logfile}"
-    publishDir "${params.data.logs}/${params.data.star}",
-        mode: "copy",
-        overwrite: true,
-        pattern: "${logfile}",
-        saveAs: {"${name}-index-${id}-${it}"}
 
     input:
-    tuple val(id), path(proteins)
+    tuple val(id), path(bam), path(gtf), val(genome_name)
 
     output:
-    tuple val(id)
+    tuple val(id), path("${id}")
     path("time-${id}-${name}.txt"), emit: "tfile", optional: true
     path("${logfile}"), emit: "logs", optional: true
 
     shell:
     '''
-    # Move proteins into a folder InterProScan likes
-    # mkdir -p "!{id}"
-    # mv  "!{proteins}" "!{id}"
-
-    # Disable lookup service, is not working
     flags="!{module.flags}"
     tfile="time-!{id}-!{name}.txt"
     !{params.time.bin} !{params.time.flags} -o "${tfile}" \
-        !{bin} "${flags}" \
-        -i "./!{proteins}" \
-        -b "./!{id}" \
-	-dp \
-        --goterms \
-        --applications SMART,CDD,Pfam,PANTHER \
-        --cpu "!{threads}"
+        !{bin} \
+        -q -W \
+        -G "!{gtf}" \
+        -p "!{threads}" \
+        -o "!{id}" \
+        "!{bam}" &> /dev/null
 
     # Process information
     echo "	Allocated resources" >> "${tfile}"

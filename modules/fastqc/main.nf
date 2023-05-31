@@ -26,8 +26,8 @@ if (module.container == "True") {
 
 
 // Set threads
-if (params.smt == "True") {
-    threads = (module.cpus.toInteger() * 2).toInteger()
+if (params.hardware.smt == "True") {
+    threads = (module.cores.toInteger() * 2).toInteger()
 }
 
 

@@ -194,6 +194,6 @@ workflow FUNGI {
 
 workflow {
     MAIN()
-    FUNGI(MAIN.out.reads)
-    // PLANT(MAIN.out.reads)
+    // FUNGI(MAIN.out.reads)
+    PLANT(MAIN.out.reads)
 }

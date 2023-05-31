@@ -8,7 +8,7 @@ name = "inspector"
 
 process module {
     executor "local"
-    // cpus module.cpus
+    // cpus module.cores
     // memory module.memory
     // time module.time
     // queue module.queue

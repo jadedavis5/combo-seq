@@ -3,6 +3,10 @@
 # pipeline
 
 
+[hardware]
+smt = true
+
+
 [files]
 # Path to the pipeline config folder
 # Default: "conf"

@@ -25,6 +25,12 @@ if (module.container == "True") {
 }
 
 
+// Set threads
+if (params.hardware.smt == "True") {
+    threads = (module.cores.toInteger() * 2).toInteger()
+}
+
+
 // Set memory
 if (module.memory == -1) {
     throw new Exception(
@@ -41,11 +47,11 @@ else {
 
 
 // Set time
-if (!module.time) {
-    println("Setting non-existent time value to 0")
-    module.time_align = 0
-    module.time_index = 0
-}
+// if (!module.time) {
+//     println("Setting non-existent time value to 0")
+//     module.time_align = 0
+//     module.time_index = 0
+// }
 
 
 // Module settings
@@ -123,7 +129,7 @@ process align {
         --sjdbOverhang "!{overhang}" \
         --sjdbInsertSave "All" \
         --genomeSAindexNbases ${x} \
-        --runThreadN "!{task.cpus}" \
+        --runThreadN "!{threads}" \
         --outSAMtype BAM SortedByCoordinate \
         --outBAMsortingThreadN "!{task.cpus}" \
         --outReadsUnmapped Fastx
@@ -133,7 +139,7 @@ process align {
     rm -rf "!{id}/_STARgenome"
 
     # Move log files
-    mv "!{id}/Log*" .
+    # mv "!{id}/Log*" .
 
     # Remove shared memory
     # if [[ ${shmem} == true ]]; then

@@ -104,8 +104,8 @@ workflow PLANT {
     gtf = Channel.fromPath("${genomes}/${params.data.plant}/genome.gtf")
     reads = reads
 
-    SEQ_LENGTH(genome)
-    genome_length = SEQ_LENGTH.out.seq_length
+    // SEQ_LENGTH(genome)
+    // genome_length = SEQ_LENGTH.out.seq_length
 
     // STAR_INDEX(
     //     id
@@ -116,9 +116,9 @@ workflow PLANT {
 
     // // STAR
     // // Returns the STAR genome index
-    path = Channel.value("${params.data.star}")
-    LOADER1(id.combine(path).combine(id))
-    index = LOADER1.out
+    // path = Channel.value("${params.data.star}")
+    // LOADER1(id.combine(path).combine(id))
+    // index = LOADER1.out
 
     // STAR accepts: reads, genome_length, gtf, indexer output
     // STAR(
@@ -127,7 +127,7 @@ workflow PLANT {
     //         .combine(gtf)
     //         .combine(index))
 
-    // Trinity
+    // // Trinity
     path = Channel.value("${params.data.star}/")
     LOADER2(reads.flatMap {n -> "${n[0]}-${params.data.plant}"}
        .combine(path)

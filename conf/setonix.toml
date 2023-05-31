@@ -4,7 +4,8 @@ module = [
     "openjdk/17.0.0_35.lua",
     "singularity/3.8.6-mpi.lua",
     "samtools/1.15--h3843a85_0",
-    "trinity/2.13.2--ha140323_0.lua"
+    "trinity/2.13.2--ha140323_0.lua",
+    "interproscan/5.56-89.0.lua"
 ]
 executor = "slurm"
 queueSize = 4
@@ -107,7 +108,7 @@ flags = ""
 # Resources
 # Memory allocation should be set to -1 to use the STAR module's automatic
 # memory assignment
-cores = 32
+cores = 16
 
 # TODO: Determine aligner peak memory usage
 memory_align = 200
@@ -117,13 +118,13 @@ memory_align = 200
 # ~1000 GB of memory available on highmem queues
 memory_index = 200
 
-queue_align = "highmem"
-queue_index = "highmem"
+queue_align = "work"
+queue_index = "work"
 
 # TODO: Determine aligner time
-time_align = 2
+time_align = 4
 # Took 1.5 h to build the Chinese Spring reference, using 64 cores and 200 GB of RAM
-time_index = 2
+time_index = 4
 
 # Container options
 container = true
@@ -134,9 +135,25 @@ bin = "STAR"
 flags = ""
 
 
+[tablemaker]
+# Resources
+cores = 4
+memory = 10
+time = 1
+queue = "work"
+
+# Container options
+container = false
+path = "${projectDir}/containers/comboseq.sif"
+
+# Command
+bin = "tablemaker"
+flags = ""
+
+
 [trinity]
 # Resources
-cores = 64 # ~1/4 of a node
+cores = 16 # ~1/4 of a node
 memory = 60 # ~1/4 of a node
 time = 24
 queue = "work"
@@ -152,14 +169,18 @@ flags = ""
 
 [interpro]
 # Resources
-cores = 32
+cores = 16
 memory = 60
-time = 12
+time = 24
 queue = "work"
 
 # Container options
 container = false
 path = "${projectDir}/containers/comboseq.sif"
+
+# Command
+bin = "interproscan.sh"
+flags = ""
 
 
 [fastqc]

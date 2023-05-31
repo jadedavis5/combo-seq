@@ -26,8 +26,8 @@ if (module.container == "True") {
 
 
 // Set threads
-if (params.smt == "True") {
-    threads = (module.cpus.toInteger() * 2).toInteger()
+if (params.hardware.smt == "True") {
+    threads = (module.cores.toInteger() * 2).toInteger()
 }
 
 
@@ -158,7 +158,7 @@ process assemble2 {
         !{bin} \
         --genome_guided_bam "!{bam}" \
         --genome_guided_max_intron !{intron_max} \
-        --CPU !{task.cpus} \
+        --CPU !{threads} \
         --max_memory !{module.memory}
 
     # Move Trinity outputs

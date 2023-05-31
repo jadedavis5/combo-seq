@@ -6,6 +6,7 @@
 [data]
 path = "${projectDir}/data"
 out = "${projectDir}/data"
+bin = "${projectDir}/bin"
 reports = "${projectDir}/reports"
 logs = "${projectDir}/logs"
 
@@ -43,6 +44,7 @@ time = "time"
 fastp = "fastp"
 fastqc = "fastqc"
 star = "star"
+tablemaker = "tablemaker"
 trinity = "trinity"
 
 

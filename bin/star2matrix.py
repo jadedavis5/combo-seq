@@ -21,15 +21,15 @@ combine = False
 for i in range(0, len(sys.argv)):
     # STAR inputs
     if sys.argv[i] == "-i":
-        files = sys.argv[i+1:]
+        files = sys.argv[i + 1 :]
 
     # Output
     if sys.argv[i] == "-o":
-        out = sys.argv[i+1]
+        out = sys.argv[i + 1]
 
     # Filter options
     if sys.argv[i] == "-q":
-        query = sys.argv[i+1]
+        query = sys.argv[i + 1]
     if sys.argv[i] == "-w":
         filter = 0
     if sys.argv[i] == "-b":
@@ -51,36 +51,36 @@ for i in range(0, len(sys.argv)):
 
 
 # Parameter debugging
-print(f"""
-Stranded: {stranded}
-Combine: {combine}
-""")
+print(f"Stranded: {stranded}\nCombine: {combine}")
 
 
 # Parameter logic checks
-if (stranded == False) and (combine == True):
-    print("Cannot combine counts from non-pair-ended reads, please enable pair-ended data with -p, or disable column combination with -C")
+if (stranded is False) and (combine is True):
+    print(
+        "Cannot combine counts from non-pair-ended reads, please enable \
+        pair-ended data with -p, or disable column combination with -C"
+    )
     exit(1)
 
 
 if len(files) == 0:
-        print("Could not find -i flag, or a list of files following the flag")
-        exit(1)
+    print("Could not find -i flag, or a list of files following the flag")
+    exit(1)
 
 # print(f"{files}")
 
 
 # Set column for strands
-if (stranded == True) and (combine == False):
+if (stranded is True) and (combine is False):
     if strand == 0:  # Set for forward strand
         col = 2
     elif strand == 1:  # Set for reverse strand
         col = 3
-elif (stranded == True) and (combine == True):
+elif (stranded is True) and (combine is True):
     col = (2, 3)
 else:
     print("Cannot process STAR non-stranded output, not-yet-implemented")
-    exit(1)
+    sys.exit(1)
 
 
 # Create empty matrix
@@ -128,12 +128,12 @@ for i in range(0, len(files)):
             if i == len(files) - 1:
                 genes.append(gene)
 
-            if stranded == True:
-                if combine == True:
+            if stranded is True:
+                if combine is True:
                     count = int(x[col[0]]) + int(x[col[1]])
                 else:
                     count = int(x[col])
-            elif standed == False:
+            elif stranded is False:
                 count = int(x[col])
 
             # print(f"Gene: {gene}\tCount: {count}")
@@ -146,9 +146,9 @@ for i in range(0, len(files)):
 print(f"Number of samples: {len(ids)}")
 print(f"Number of genes: {len(genes)}")
 
-df = pd.DataFrame(data = matrix, index = genes, columns = ids)
+df = pd.DataFrame(data=matrix, index=genes, columns=ids)
 df[ids] = df[ids].astype(int)
-pd.DataFrame.to_csv(df, out, sep = "\t")
+pd.DataFrame.to_csv(df, out, sep="\t")
 
 
 # Fix header
