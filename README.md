@@ -1,5 +1,4 @@
-# work in progress
-## Combo-seq
+# Combo-seq
 
 Combo-seq is an analysis program which can process raw FASTA/FASTQ sequencing reads produced using the NEXTFLEX® Combo-Seq™ mRNA/miRNA Kit. It performs:
 
@@ -49,7 +48,4 @@ $ nextflow run workflow.nf -resume
 
 ## Contact
 Jade Davis 20558259@student.curitn.edu.au
-
-## License
-### idk what liscence to use https://choosealicense.com/
 
